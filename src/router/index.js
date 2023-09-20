@@ -48,7 +48,24 @@ const routes = [
   {
     path: '/my',
     name: 'my',
-    component: () => import(/* webpackChunkName: 'importPage' */ '../views/my/my.vue')
+    component: () => import(/* webpackChunkName: 'importPage' */ '../views/my/my.vue'),
+    children: [
+      {
+        path: 'video',
+        name: 'video',
+        component: () => import(/* webpackChunkName: "about" */ '../views/my/video.vue')
+      },
+      {
+        path: 'videoAndDesc',
+        name: 'videoAndDesc',
+        component: () => import(/* webpackChunkName: "about" */ '../views/my/videoAndDesc.vue')
+      },
+      {
+        path: 'likes',
+        name: 'likes',
+        component: () => import(/* webpackChunkName: "about" */ '../views/my/likes.vue')
+      }
+    ]
   }
 ]
 const router = createRouter({

@@ -4,8 +4,8 @@
       <div class="top">
         <img @click="tosearch" src="/src/assets/home/search.png" alt="" />
       </div>
-      <div class="middle" @click="Pause">
-        <!-- <video cless="video"   @click="playClick"  :src="item.Video.videoPath"  style="width: 100%; height: 100%; object-fit: fill" autoplay muted loop="loop"  v-show="!ifImg"> </video> -->
+      <div class="middle" @click="Pause" >
+        <!-- <video cless="video"   @click="playClick"  :src="item.Video.videoPath"  style="width: 100%; height: 100%; object-fit: fill" autoplay :muted='item.muted' loop  > </video> -->
         <!-- <img class="zanting"  src="/src/assets/home/zanting.png" alt="" /> -->
         <img class="kaishi" v-show="iskaishi" src="/src/assets/home/kaishi.png" alt="" />
       </div>
@@ -96,7 +96,8 @@ const video = async () => {
   })
   // 动态添加 isshowlike
   for (let i = 0; i < videolist.length; i++) {
-    videolist[i].isshowlike = false
+    videolist[i].isshowlike = false 
+    videolist[i].muted = false
   }
   console.log(videolist)
 }
@@ -229,6 +230,7 @@ const tosearch = () => {
 .box {
   border-bottom: 1px solid rgb(93, 93, 93);
   position: relative;
+  height: 100vh;
   .top {
     width: 100%;
     height: 3.8rem;

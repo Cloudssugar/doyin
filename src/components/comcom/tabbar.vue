@@ -7,7 +7,7 @@
         <img src="/src/assets/home/jia.png" alt="" />
       </router-link>
       <router-link to="/message">消息</router-link>
-      <router-link to="/my/videosnum">我</router-link>
+      <router-link to="/my/video">我</router-link>
     </div>
   </div>
 </template>
