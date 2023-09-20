@@ -73,21 +73,15 @@ const codes = ref('')
 // 点击发送倒计时按钮
 const code = async () => {
   if (obj.isSend) return
-  //此处为接口
+  //接口
   let res = await getCodeAPI(email.value)
-  console.log(res)
-  // axios({
-  //   method: 'get',
-  //   url: `http://43.138.15.137:3000/api/common/user/getCode/${email.value}`
-  // }).then((res) => {
-  //   console.log(res)
-  //   // ElMessage(res.data.message)
-  // })
+  // console.log(res)
   obj.isSend = true
   obj.codeName = obj.totalTime + 's后重新发送'
   obj.timer = setInterval(() => {
     obj.totalTime--
     obj.codeName = obj.totalTime + 's后重新发送'
+     //当倒计时小于0时清除定时器
     if (obj.totalTime < 0) {
       clearInterval(obj.timer)
       obj.codeName = '重新发送验证码'

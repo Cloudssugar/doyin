@@ -53,14 +53,14 @@ import tabbar from '../../components/comcom/tabbar.vue'
 .message {
    box-sizing: border-box;
   width: 100%;
-  height: 78px;
+  height:1.56rem;
    display: flex;
   justify-content: space-around;
   align-items: center;
   border-bottom: 1px solid beige;
   .fensi {
     text-align: center;
-    font-size: 14px;
+    font-size: 0.28rem;
     width: 0.8rem;
     height: 1.3rem;
 
