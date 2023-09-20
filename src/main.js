@@ -6,7 +6,8 @@ import router from './router/index'
 // rem
 import './rem.js'
 
+
+
 // 使用路由
-const app = createApp(App)
 
 createApp(App).use(router).mount('#app')

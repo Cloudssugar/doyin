@@ -37,3 +37,8 @@ export function searchVideoAPI(params) {
 export function searchUserAPI(params) {
   return http.post(`api/user/${userId}/searchUser/1`,params)
 }
+
+// 关注取消用户
+export function triggerFollowAPI(params) {
+  return http.get(`api/user/${userId}/triggerFollow/${params}`)
+}

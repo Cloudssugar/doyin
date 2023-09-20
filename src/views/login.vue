@@ -26,7 +26,7 @@
           <p>注册</p>
           <input type="text" v-model="email" placeholder="输入邮箱" />
           <input type="password" v-model="password" placeholder="输入密码" />
-          <input type="text" v-model="codes" placeholder="输入验证码" />
+          <input type="text"   v-model="codes" placeholder="输入验证码" />
           <div class="code" @click="code">
             {{ obj.codeName }}
             <!-- <span v-if="obj.show">发送验证码</span> -->
@@ -40,6 +40,7 @@
 </template>
 
 <script setup>
+import { Debounce } from '../utils/debounce.js'
 import axios from 'axios'
 import { getCodeAPI, postregisterAPI, postloginAPI } from '../api/login.js'
 import { ref, reactive } from 'vue'
@@ -75,7 +76,6 @@ const code = async () => {
   if (obj.isSend) return
   //接口
   let res = await getCodeAPI(email.value)
-  // console.log(res)
   obj.isSend = true
   obj.codeName = obj.totalTime + 's后重新发送'
   obj.timer = setInterval(() => {
@@ -98,9 +98,7 @@ const register = async () => {
     code: code.value
   })
   console.log(res)
-  // if('The email is registered'){
-  //    MessageMainVue({ type: 'success', text: '已注册~' })
-  // }
+
   console.log(islogin.value)
   islogin.value = true
   issignin.value = false
