@@ -1,13 +1,17 @@
 <template>
-  <div>
-    <div class="box" v-for="(item, index) in videolist" :key="item.id">
+  <div class="home">
+    <img class="search-img" @click="tosearch" src="/src/assets/home/search.png" alt="" />
+
+    <div class="box" :class="{ animsteClass: flag }" v-for="(item, index) in videolist" :key="item.id" :style="{ transform: `translateY(${y}px)`, paddingTop: (moveindex ? moveindex - 1 : 0) * clientY + 'px' }" @touchstart="start" @touchmove="move" @touchend="end($event, index)">
       <div class="top">
-        <img @click="tosearch" src="/src/assets/home/search.png" alt="" />
+        <!-- <img @click="tosearch" src="/src/assets/home/search.png" alt="" /> -->
       </div>
-      <div class="middle" @click="Pause" >
-        <!-- <video cless="video"   @click="playClick"  :src="item.Video.videoPath"  style="width: 100%; height: 100%; object-fit: fill" autoplay :muted='item.muted' loop  > </video> -->
-        <!-- <img class="zanting"  src="/src/assets/home/zanting.png" alt="" /> -->
-        <img class="kaishi" v-show="iskaishi" src="/src/assets/home/kaishi.png" alt="" />
+        {{ videoIndex }}
+        <!-- :src="item.Video.videoPath" -->
+      <div class="middle" @click="changeVideoplay" >
+        <video cless="video" ref="videos"  @click="playClick" v-if="item"  style="width: 100%; height: 100%; object-fit: fill" autoplay controls loop muted showPlay @play="videoIsPlay = true" @pause="videoIsPlay = false" @ended="videoIsPlay = false"></video>
+        <img class="kaishi" v-show="videoIsPlay" src="/src/assets/home/kaishi.png" alt="" />
+        <!-- <img class="videoIsPlay" v-show="!videoIsPlay" @click="changeVideopause" src="/src/assets/home/zanting.png" alt="" /> -->
       </div>
       <div class="bottom">
         <div class="content">
@@ -35,8 +39,9 @@
     </div>
 
     <!-- 评论的弹出框 -->
-    <div class="review" v-show="isreview" @touchmove.prevent>
-      <div class="box" @touchmove.prevent>
+    <commentBbox :isreview="isreview"  @getreviews="getreviews" :reviewlist='reviewlist' @getreview='getreview' :reviewval='reviewval' @reviewinp='reviewinp'> </commentBbox>
+    <!-- <div class="review" v-show="isreview" @touchmove.prevent> -->
+      <!-- <div class="box" @touchmove.prevent>
         <div class="review-top">
           <span></span>
           <span>{{ reviewlist.length }}条评论</span>
@@ -55,10 +60,9 @@
               <img v-else src="/src/assets/home/likered.png" alt="" />
 
               <span>{{ item.likeNum }}</span>
-            </div>
+            </div> -->
 
-            <!-- 发表评论的input -->
-            <div class="publish">
+            <!-- <div class="publish">
               <input v-model="reviewval" @keydown.enter="reviewinp" type="text" placeholder="多一次评论，多一份理解" />
               <div>
                 <span>@</span>
@@ -66,28 +70,32 @@
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+        </div> -->
+      <!-- </div> -->
+    <!-- </div> -->
 
-    <!-- <div>home</div> -->
+
     <tabbar></tabbar>
   </div>
 </template>
 
 <script setup>
+// 引入评论弹框组件
+import commentBbox from '../../components/comcom/comment-box.vue'
 import tabbar from '../../components/comcom/tabbar.vue'
 // 引入消息 文件
 import MessageMainVue from '../../components/js/message.js'
 import { getPopularVideoAPI, triggerLikeAPI, getVideoCommentAPI, commentVideoAPI, triggerLikeCommentAPI } from '../../api/home.js'
-import { onMounted, ref, reactive } from 'vue'
+import { onMounted, ref, reactive, renderList, computed,defineComponent ,defineEmits} from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 const videolist = reactive([])
+
 onMounted(() => {
   video()
-  updateTime()
+
 })
+
 // 获取视频
 const video = async () => {
   let res = await getPopularVideoAPI()
@@ -96,20 +104,20 @@ const video = async () => {
   })
   // 动态添加 isshowlike
   for (let i = 0; i < videolist.length; i++) {
-    videolist[i].isshowlike = false 
+    videolist[i].isshowlike = false
     videolist[i].muted = false
   }
   console.log(videolist)
 }
 
 // //
-const islike = ref(true)
-const islikered = ref(false)
+// const islike = ref(true)
+// const islikered = ref(false)
 // 点赞
 const getlike = async (item) => {
   item.isshowlike = !item.isshowlike
   const videoId = item.Video.videoId
-  localStorage.setItem('videoId', item.Video.videoId)
+  // localStorage.setItem('videoId', item.Video.videoId)
   let res = await triggerLikeAPI(videoId)
   MessageMainVue({ type: 'success', text: res.data.data })
   if (videoId == item.Video.videoId) {
@@ -118,97 +126,198 @@ const getlike = async (item) => {
     } else {
       item.WSLCNum.likeNum--
     }
+    if (res.data.data == '取消喜欢成功') {
+      MessageMainVue({ type: 'success', text: '取消喜欢成功' })
+    }
   }
 }
 
-// 视频开始暂停
-const iskaishi = ref(false)
-// const iszanting=ref(false)
-const Pause = () => {
-  iskaishi.value = !iskaishi.value
+
+//  const box=ref(null)
+//  console.log(box);
+// 视频的上下滑动
+// 获取到屏幕的高度
+let clientY = document.body.clientHeight || document.documentElement.clientHeight
+// 用来控制向上移动的距离
+let y = ref(0)
+const startY = ref()
+const startMoveY = ref()
+const flag = ref(false)
+const videos=ref(null)
+console.log(videos);
+
+const start = (e) => {
+  // 判断手指在页面的位置
+  // e.touches  获取当前手指在页面位置
+  startY.value = e.touches[0].pageY
+  // 已经移动多少
+  startMoveY.value = y.value
+  flag.value = false
 }
+const move = (e) => {
+  // 移动的距离
+  const moveY = e.touches[0].pageY - startY.value
+  y.value = moveY + startMoveY.value
+}
+const end = (e, index) => {
+  // 松手时 移动的距离
+  let endY = e.changedTouches[0].pageY - startY.value
+  console.log(endY)
+  //
+  if (Math.abs(endY) < clientY / 4) {
+    y.value = startMoveY.value
+  } else {
+    if (endY < 0) {
+      // 下一屏
+      if (videolist[index + 1]) {
+        y.value = startMoveY.value - clientY
+        videos.value[index].pause()
+        videos.value[index + 1].play()
+        // moveindex.value++
+      } else {
+        y.value = startMoveY.value
+        // 没有了
+      }
+    } else {
+      // 上一屏
+      if (videolist[index - 1]) {
+        y.value = startMoveY.value - clientY
+        videos.value[index].pause()
+        videos.value[index - 1].play()
+        // moveindex.value--
+      } else {
+        y.value = startMoveY.value
+        // 没有了
+      }
+    }
+  }
+  flag.value = true
+}
+//
+// 用来记录当前项
+// const moveindex = ref(0)
+// // const renderList = reactive([])
+// computed(() => {
+//   const arr = reactive([])
+//   arr = videolist.map((item) => {
+//     if (index == moveindex.value || index == moveindex.value - 1 || index == moveindex.value + 1) {
+//       return item
+//     } else {
+//       return ''
+//     }
+//   })
+// })
+
+// 视频开始暂停
+const videoIsPlay = ref(false)
+const videoIndex=ref(0)
+const changeVideoplay=()=>{
+  console.log('111');
+   // 获得所有的播放器
+    let videoS = document.querySelectorAll('.video')
+    console.log(videoS);
+
+    // console.log(videoIndex.value);
+    // videoS[videoIndex.value].play() //开始播放
+
+      videoIsPlay.value = !videoIsPlay.value
+  if (videoIsPlay.value) {
+    video.value[index].play()
+  } else {
+    video.value[index].pause()
+  }
+}
+// const changeVideopause=()=>{
+//     // 获得所有的播放器
+//     let videoS = document.querySelectorAll('.video')
+//     console.log(videoS);
+//     // videoS[videoIndex.value].pause(); //关闭播放
+//     videoIsPlay.value = !videoIsPlay.value
+//   if (videoIsPlay.value) {
+//     video.value[index].play()
+//   } else {
+//     video.value[index].pause()
+//   }
+// }
+
+// const changeVideoStatus = (index) => {
+
+// }
 
 //评论列表
 const isreview = ref(false)
 const reviewlist = ref([])
 const reviewval = ref('')
 const ispllike = ref(true)
+const plvideoId=ref('')
 const getreview = async (item) => {
   console.log(item)
   isreview.value = true
-  const videoId = localStorage.getItem('videoId')
-  let res = await getVideoCommentAPI(videoId)
-  console.log(res);
+  plvideoId.value=item.Video.videoId
+  let res = await getVideoCommentAPI(plvideoId.value)
+  console.log(res)
   reviewlist.value = res.data.data
-    for (let i = 0; i <  reviewlist.value.length; i++) {
+  for (let i = 0; i < reviewlist.value.length; i++) {
     reviewlist.value[i].ispllike = false
   }
 }
 
+// 关闭弹框
 const getreviews = () => {
   isreview.value = !isreview.value
 }
 
+
 // 发表评论
-const reviewinp = async () => {
+const reviewinp = async (reviewval) => {
   const userId = localStorage.getItem('userId')
-  const videoId = localStorage.getItem('videoId')
   let res = await commentVideoAPI({
     fromUserId: userId,
     replyId: '',
-    content: reviewval.value,
-    toVideoId: videoId
+    content: reviewval,
+    toVideoId: plvideoId.value
   })
   console.log(res)
-  reviewval.value = ''
-  getreview(videoId)
+  // reviewval.value = ''
+  getreview()
   MessageMainVue({ type: 'success', text: '我评论啦' })
 }
 
-// 评论时间
-const date = ref('')
-//格式化时间的函数  。它接受一个数字类型的参数 time，表示需要格式化的时间。
-//如果 time 小于10，则返回一个带有前导零的字符串表示；
-//否则，将 time 转换为字符串后返回。
-function formatTime(time) {
-  return time < 10 ? `0${time}` : time
-}
-function updateTime() {
-  const now = new Date()
-  const year = now.getFullYear() //年
-  const month = now.getMonth() + 1 //月
-  const day = now.getDate() //日
-  const hours = now.getHours() //小时数
-  // const minutes = now.getMinutes()  //分钟数
-  // const seconds = now.getSeconds()  //秒数
-  // const week = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"][now.getDay()]  //星期
-  //想展示什么  对应的展示即可
-  date.value = `${year}-${formatTime(month)}-${formatTime(day)} `
-}
-// 评论里边的点赞
-const videoId = ref('')
-const commentId = ref('')
-const getpllike = async (item) => {
-  console.log(item)
-    item.ispllike = !item.ispllike
-  commentId.value = item.Comment.commentId
-  videoId.value = item.Comment.videoId
-  let res = await triggerLikeCommentAPI({
-    videoId: videoId.value,
-    commentId: commentId.value
-  })
-  console.log(res)
-  MessageMainVue({ type: 'success', text: res.data.data })
-  if (commentId.value == item.Comment.commentId) {
-    if (res.data.data == '喜欢评论成功') {
-      item.likeNum++
-    
-    } else {
-      item.likeNum--
-     
-    }
-  }
-}
+// // 评论时间
+// const date = ref('')
+// function formatTime(time) {
+//   return time < 10 ? `0${time}` : time
+// }
+// function updateTime() {
+//   const now = new Date()
+//   const year = now.getFullYear() //年
+//   const month = now.getMonth() + 1 //月
+//   const day = now.getDate() //日
+//   const hours = now.getHours() //小时数
+//   date.value = `${year}-${formatTime(month)}-${formatTime(day)} `
+// }
+// // 评论里边的点赞
+// const videoId = ref('')
+// const commentId = ref('')
+// const getpllike = async (item) => {
+//   console.log(item)
+//   item.ispllike = !item.ispllike
+//   commentId.value = item.Comment.commentId
+//   videoId.value = item.Comment.videoId
+//   let res = await triggerLikeCommentAPI({
+//     videoId: videoId.value,
+//     commentId: commentId.value
+//   })
+//   console.log(res)
+//   MessageMainVue({ type: 'success', text: res.data.data })
+//   if (commentId.value == item.Comment.commentId) {
+//     if (res.data.data == '喜欢评论成功') {
+//       item.likeNum++
+//     } else {
+//       item.likeNum--
+//     }
+//   }
+// }
 
 // 搜索
 const tosearch = () => {
@@ -227,9 +336,57 @@ const tosearch = () => {
     height: 0.6rem;
   }
 }
+/* 隐藏video 全屏按钮 */
+video::-webkit-media-controls-fullscreen-button {
+		display: none;
+}
+/* 隐藏video 播放按钮 */
+
+/* 隐藏video 进度条 */
+video::-webkit-media-controls-timeline {
+		display: none;
+}
+/* 隐藏video 观看的当前时间 */
+video::-webkit-media-controls-current-time-display{
+		display: none;            
+}
+/* 隐藏video 剩余时间 */
+video::-webkit-media-controls-time-remaining-display {
+		display: none;            
+}
+/* 隐藏video 音量按钮 */
+video::-webkit-media-controls-mute-button {
+		display: none;            
+}
+video::-webkit-media-controls-toggle-closed-captions-button {
+		display: none;            
+}
+/* 隐藏video 音量的控制条 */
+video::-webkit-media-controls-volume-slider {
+		display: none;            
+}
+
+.home {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+.search-img {
+  z-index: 10;
+  position: fixed;
+  top: 0.4rem;
+  right: 0.4rem;
+  width: 0.4rem;
+  height: 0.4rem;
+}
+.animsteClass {
+  transition: transfrom 0.5s;
+}
 .box {
+  box-sizing: border-box;
   border-bottom: 1px solid rgb(93, 93, 93);
   position: relative;
+  width: 100%;
   height: 100vh;
   .top {
     width: 100%;

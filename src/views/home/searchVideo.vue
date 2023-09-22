@@ -2,7 +2,7 @@
   <div>
     <div class="search">
       <img @click="tohome" src="/src/assets/home/jiantou.png" alt="" />
-      <input v-model="videoval" @input="serachinp" type="text" placeholder="输入关键词进行搜索(视频描述)" />
+      <input v-focus v-model="videoval" @input="serachinp" type="text" placeholder="输入关键词进行搜索(视频描述)" />
       <img class="search-img" src="/src/assets/home/search.png" alt="" />
     </div>
     <div class="tab">

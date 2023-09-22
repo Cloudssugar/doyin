@@ -2,7 +2,7 @@
   <div>
     <div class="search">
       <img @click="tohome" src="/src/assets/home/jiantou.png" alt="" />
-      <input @input="userinp" v-model="userval" type="text" placeholder="输入关键词进行搜索(用户名称，id)" />
+      <input @input="userinp" v-focus v-model="userval" type="text" placeholder="输入关键词进行搜索(用户名称，id)" />
       <img class="search-img" src="/src/assets/home/search.png" alt="" />
     </div>
     <div class="tab">

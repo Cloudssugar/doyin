@@ -5,7 +5,7 @@
       <img src="/src/assets/my/more.png" alt="" />
     </div>
     <div class="avatar">
-      <img src="/src/assets/c75ae7128274356b4033ab6464338b67.jpg" alt="" />
+      <img src="/src/assets/派大星3.png" alt="" />
     </div>
     <div class="my-message">
       <div class="ddd"></div>
