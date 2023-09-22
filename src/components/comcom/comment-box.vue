@@ -15,7 +15,7 @@
               <div class="content">
                 <span>@{{ item.Comment.userNickname }}</span>
                 <span>{{ item.Comment.commentContent }}</span>
-                <span>{{ date }}</span>
+                <span>{{ formatTime(item.Comment.createdAt) }}</span>
               </div>
               <div class="like" @click="getpllike(item)">
                 <img v-if="!item.ispllike" src="/src/assets/home/like.png" alt="" />
@@ -41,6 +41,8 @@
 </template>
 
 <script setup>
+// 时间
+import {formatTime} from '../../utils/formatTime.js'
 // 引入消息 文件
 import MessageMainVue from '../../components/js/message.js'
 import { reactive, ref, defineProps, defineEmits, toRefs, onMounted } from 'vue'
@@ -60,7 +62,7 @@ let getreviews = () => {
   emit('getreviews', true)
 }
 onMounted(() => {
-  updateTime()
+  // updateTime()
 })
 //  发布评论
 const reviewinp = () => {
@@ -69,19 +71,19 @@ const reviewinp = () => {
   console.log(reviewval.value, '111')
 }
 
-// 评论时间
-const date = ref('')
-function formatTime(time) {
-  return time < 10 ? `0${time}` : time
-}
-function updateTime() {
-  const now = new Date()
-  const year = now.getFullYear() //年
-  const month = now.getMonth() + 1 //月
-  const day = now.getDate() //日
-  const hours = now.getHours() //小时数
-  date.value = `${year}-${formatTime(month)}-${formatTime(day)} `
-}
+// // 评论时间
+// const date = ref('')
+// function formatTime(time) {
+//   return time < 10 ? `0${time}` : time
+// }
+// function updateTime() {
+//   const now = new Date()
+//   const year = now.getFullYear() //年
+//   const month = now.getMonth() + 1 //月
+//   const day = now.getDate() //日
+//   const hours = now.getHours() //小时数
+//   date.value = `${year}-${formatTime(month)}-${formatTime(day)} `
+// }
 
 // 评论里边的点赞
 const videoId = ref('')

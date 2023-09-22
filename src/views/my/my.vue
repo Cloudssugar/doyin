@@ -3,8 +3,16 @@
     <div class="bg">
       <!-- 背景图片 -->
       <img src="/src/assets/wallpaper1668603987563.jpg" alt="" />
-      <img src="/src/assets/my/more.png" alt="" />
+      <img @click="more" src="/src/assets/my/more.png" alt="" />
     </div>
+    <!-- 更多弹框 -->
+    <transition name="morebox">
+      <div class="more-box" v-show="ismore">
+        <span>修改个人资料</span>
+        <span>注销</span>
+      </div>
+    </transition>
+
     <div v-for="(item, index) in userlist" :key="item.id">
       <!-- 头像 -->
       <div class="avatar">
@@ -22,7 +30,7 @@
           <span>{{ item.userDesc }}</span>
           <div class="female"><img src="/src/assets/my/female.png" alt="" /> {{ item.userAge }}</div>
           <div class="zan">
-            <span>{{ byLikesNum }}获赞</span><span>{{ FollowersNum }}关注</span><span>{{ FansNum }}粉丝</span>
+            <span>{{ byLikesNum }} 获赞</span><span>{{ FollowersNum }} 关注</span><span>{{ FansNum }} 粉丝</span>
           </div>
         </div>
       </div>
@@ -31,9 +39,9 @@
     <div class="warp">
       <!-- tab栏 -->
       <div class="tab">
-        <router-link class="active" to="/my/video">作品{{VideosNum}}</router-link>
-        <router-link to="/my/videoAndDesc">动态{{VideosNum}}</router-link>
-        <router-link to="/my/likes">喜欢{{LikesNum}}</router-link>
+        <router-link class="active" to="/my/video">作品 {{ VideosNum }}</router-link>
+        <router-link to="/my/videoAndDesc">动态 {{ VideosNum }}</router-link>
+        <router-link to="/my/likes">喜欢 {{ LikesNum }}</router-link>
       </div>
       <!-- 作品内容 -->
       <div>
@@ -46,8 +54,7 @@
 
 <script setup>
 import tabbar from '../../components/comcom/tabbar.vue'
-import { getgetUserInfoAPI, getbyLikesNumAPI, getFansNumAPI, getFollowersNumAPI
-,getVideosNumAPI,getLikesNumPI } from '../../api/my.js'
+import { getgetUserInfoAPI, getbyLikesNumAPI, getFansNumAPI, getFollowersNumAPI, getVideosNumAPI, getLikesNumPI } from '../../api/my.js'
 import { ref, onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
@@ -105,6 +112,12 @@ const getLikesNum = async () => {
   LikesNum.value = res.data.data
   console.log(res)
 }
+
+//
+const ismore = ref(false)
+const more = () => {
+  ismore.value = !ismore.value
+}
 </script>
 
 <style lang="scss" scoped>
@@ -140,6 +153,19 @@ const getLikesNum = async () => {
     height: 1.8rem;
     border-radius: 1rem;
   }
+}
+.more-box {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.2rem;
+  width: 1.6rem;
+  height: 1.8rem;
+  font-size: 0.26rem;
+  display: flex;
+  justify-content: space-evenly;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(56, 56, 56, 0.6);
 }
 .my-message {
   width: 100%;
@@ -216,6 +242,37 @@ const getLikesNum = async () => {
   }
   a {
     color: rgb(157, 157, 157);
+  }
+}
+/* 给过渡的name加样式 */
+.morebox-enter-active {
+  animation-name: slideInUp;
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
+}
+.morebox-leave-active {
+  animation-name: slideOutDown;
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
+}
+@keyframes slideInUp {
+  0% {
+    transform: translate3d(0, 100%, 0);
+    visibility: visible;
+    opacity: 0;  //淡出淡入
+  }
+  to {
+    transform: translateZ(0);
+  }
+}
+@keyframes slideOutDown {
+  0% {
+    transform: translateZ(0);
+  }
+  to {
+    visibility: hidden;
+    transform: translate3d(0, 100%, 0);
+    opacity: 0;
   }
 }
 </style>

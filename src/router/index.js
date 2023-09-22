@@ -76,7 +76,7 @@ const router = createRouter({
 // 全局前置守卫 ————初始化的时候被调用、每次路由切换之前被调用
 router.beforeEach((to, from, next) => {
   // 登录和注册  首页界面进行选择
-  if (to.path === '/login' || to.path === '/register' || to.path === '/home') {
+  if (to.path === '/login'  || to.path === '/home') {
     next()
   } else {
     // 如果没有 userId 就去登录

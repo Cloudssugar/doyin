@@ -29,7 +29,7 @@
           </div>
         </div>
         <div class="date">
-          <span>3小时前</span>
+          <span>{{formatTime(item.Video.createdAt)}}</span>
         </div>
       </div>
     </div>
@@ -42,6 +42,8 @@
 </template>
 
 <script setup>
+// 时间
+import {formatTime} from '../../utils/formatTime.js'
 import tabbar from '../../components/comcom/tabbar.vue'
 // 引入评论弹框组件
 import commentBbox from '../../components/comcom/comment-box.vue'

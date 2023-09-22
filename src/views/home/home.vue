@@ -88,7 +88,7 @@
 <script setup>
 // 引入评论弹框组件
 import commentBbox from '../../components/comcom/comment-box.vue'
-// 
+//
 import tabbar from '../../components/comcom/tabbar.vue'
 // 引入消息 文件
 import MessageMainVue from '../../components/js/message.js'
@@ -97,7 +97,7 @@ import { onMounted, ref, reactive, renderList, computed, defineComponent, define
 import { useRouter } from 'vue-router'
 const router = useRouter()
 const videolist = reactive([])
-// 
+//
 onMounted(() => {
   video()
 })
