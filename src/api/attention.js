@@ -8,7 +8,6 @@ export function getFollowerVideoAPI(params) {
   return http.get(`api/user/${userId}/FollowerVideo/page/1`)
 }
 
-
 // 我关注的动态 点赞
 export function getFollowerVideotriggerLikeAPI(params) {
   return http.get(`api/user/${userId}/triggerLike/${params}`)

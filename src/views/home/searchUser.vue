@@ -1,14 +1,17 @@
 <template>
   <div>
+  <!-- 顶部栏 -->
     <div class="search">
       <img @click="tohome" src="/src/assets/home/jiantou.png" alt="" />
       <input @input="userinp" v-focus v-model="userval" type="text" placeholder="输入关键词进行搜索(用户名称，id)" />
       <img class="search-img" src="/src/assets/home/search.png" alt="" />
     </div>
+    <!-- tab栏 -->
     <div class="tab">
       <div @click="toesarchvideo">视频</div>
       <div>用户</div>
     </div>
+    <!-- 视频内容 -->
     <div class="userlist">
       <div class="useritem" v-for="(item, index) in userlist" :key="item.id">
         <!-- {{ item }} -->

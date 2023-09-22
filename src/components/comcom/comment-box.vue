@@ -1,48 +1,49 @@
 <template>
   <div>
     <!-- 评论的弹出框 -->
-    <div class="review" v-show="isreview" @touchmove.prevent>
-      <div class="box" @touchmove.prevent >
-        <div class="review-top">
-          <span></span>
-          <span>{{ reviewlist.length }}条评论</span>
-          <img @click="getreviews" src="/src/assets/home/cross.png" alt="" />
-        </div>
-        <div class="reviewlist">
-          <div class="reviewitem" v-for="(item, index) in reviewlist" :key="item.id">
-            <img :src="`http://43.138.15.137:3000` + item.Comment.userAvatar" alt="" />
-            <div class="content">
-              <span>@{{ item.Comment.userNickname }}</span>
-              <span>{{ item.Comment.commentContent }}</span>
-              <span>{{ date }}</span>
-            </div>
-            <div class="like" @click="getpllike(item)">
-              <img v-if="!item.ispllike" src="/src/assets/home/like.png" alt="" />
-              <img v-else src="/src/assets/home/likered.png" alt="" />
-
-              <span>{{ item.likeNum }}</span>
-            </div>
-           
+    <transition name="slide">
+      <div class="review" v-show="isreview" @touchmove.prevent>
+        <div class="box" @touchmove.prevent>
+          <div class="review-top">
+            <span></span>
+            <span>{{ reviewlist.length }}条评论</span>
+            <img @click="getreviews" src="/src/assets/home/cross.png" alt="" />
           </div>
-           <!-- 发表评论的input -->
+          <div class="reviewlist">
+            <div class="reviewitem" v-for="(item, index) in reviewlist" :key="item.id">
+              <img :src="`http://43.138.15.137:3000` + item.Comment.userAvatar" alt="" />
+              <div class="content">
+                <span>@{{ item.Comment.userNickname }}</span>
+                <span>{{ item.Comment.commentContent }}</span>
+                <span>{{ date }}</span>
+              </div>
+              <div class="like" @click="getpllike(item)">
+                <img v-if="!item.ispllike" src="/src/assets/home/like.png" alt="" />
+                <img v-else src="/src/assets/home/likered.png" alt="" />
+
+                <span>{{ item.likeNum }}</span>
+              </div>
+            </div>
+            <div class="nopl">没有更多评论啦····</div>
+            <!-- 发表评论的input -->
             <div class="publish">
-              <input  v-focus v-model="reviewval" @keydown.enter="reviewinp" type="text" placeholder="多一次评论，多一份理解" />
+              <input v-focus v-model="reviewval" @keydown.enter="reviewinp" type="text" placeholder="多一次评论，多一份理解" />
               <div>
                 <span>@</span>
                 <img src="/src/assets/home/tick.png" alt="" />
               </div>
             </div>
+          </div>
         </div>
       </div>
-    </div>
+    </transition>
   </div>
 </template>
 
 <script setup>
-
 // 引入消息 文件
 import MessageMainVue from '../../components/js/message.js'
-import { reactive, ref, defineProps, defineEmits, toRefs,onMounted } from 'vue'
+import { reactive, ref, defineProps, defineEmits, toRefs, onMounted } from 'vue'
 import { triggerLikeCommentAPI } from '../../api/home.js'
 //此处必须用toRefs，否则将失去响应式
 const { reviewlist } = toRefs(props)
@@ -53,21 +54,19 @@ const props = defineProps({
 })
 console.log(props.reviewlist.value)
 
-const emit = defineEmits(['getreviews','reviewinp'])
+const emit = defineEmits(['getreviews', 'reviewinp'])
 // 关闭模态框
 let getreviews = () => {
   emit('getreviews', true)
-   
 }
 onMounted(() => {
   updateTime()
-
 })
 //  发布评论
 const reviewinp = () => {
- emit('reviewinp', reviewval.value)
-   reviewval.value=''
-   console.log( reviewval.value,'111');
+  emit('reviewinp', reviewval.value)
+  reviewval.value = ''
+  console.log(reviewval.value, '111')
 }
 
 // 评论时间
@@ -109,6 +108,9 @@ const getpllike = async (item) => {
 </script>
 
 <style lang="scss" scoped>
+.openActive {
+  bottom: 0px !important;
+}
 .review {
   overflow: scroll;
   z-index: 999;
@@ -117,7 +119,8 @@ const getpllike = async (item) => {
   position: fixed;
   left: 0;
   bottom: 0;
-  background: black;
+  background: rgb(27, 27, 27);
+  color: rgb(194, 194, 194);
 }
 .box {
   width: 100%;
@@ -133,7 +136,7 @@ const getpllike = async (item) => {
     justify-content: space-between;
     align-items: center;
 
-    background: black;
+  background: rgb(27, 27, 27);
     img {
       width: 0.4rem;
       height: 0.4rem;
@@ -163,7 +166,7 @@ const getpllike = async (item) => {
       flex-direction: column;
       justify-content: space-evenly;
       width: 60%;
-      font-size: 15px;
+      font-size: 14px;
     }
     .like {
       display: flex;
@@ -179,6 +182,12 @@ const getpllike = async (item) => {
       }
     }
   }
+  .nopl{
+    margin-top: 0.2rem;
+    font-size: 14px;
+  text-align: center;
+  height: 1.2rem;
+}
 }
 
 .publish {
@@ -209,4 +218,38 @@ const getpllike = async (item) => {
     }
   }
 }
+
+
+
+.slide-enter-active {
+  animation-name: slideInUp;
+  animation-duration: 0.2s;
+  animation-fill-mode: both;
+}
+.slide-leave-active {
+  animation-name: slideOutDown;
+  animation-duration: 0.2s;
+  animation-fill-mode: both;
+}
+@keyframes slideInUp {
+  0% {
+    transform: translate3d(0, 100%, 0);
+    visibility: visible;
+  }
+
+  to {
+    transform: translateZ(0);
+  }
+}
+@keyframes slideOutDown {
+  0% {
+    transform: translateZ(0);
+  }
+
+  to {
+    visibility: hidden;
+    transform: translate3d(0, 100%, 0);
+  }
+}
+
 </style>

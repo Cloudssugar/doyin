@@ -1,30 +1,41 @@
 <template>
   <div>
     <div class="bg">
+      <!-- 背景图片 -->
       <img src="/src/assets/wallpaper1668603987563.jpg" alt="" />
       <img src="/src/assets/my/more.png" alt="" />
     </div>
-    <div class="avatar">
-      <img src="/src/assets/派大星3.png" alt="" />
-    </div>
-    <div class="my-message">
-      <div class="ddd"></div>
-      <div class="message">
-        <span>不是白雪</span>
-        <span>抖音号:15665432456876543</span>
+    <div v-for="(item, index) in userlist" :key="item.id">
+      <!-- 头像 -->
+      <div class="avatar">
+        <img :src="`http://43.138.15.137:3000` + item.userAvatar" alt="" />
       </div>
-      <div class="signature">
-        <span>树叶开始掉落了</span>
-        <div class="female"><img src="/src/assets/my/female.png" alt="" /> 12</div>
-        <div class="zan"><span>22获赞</span><span>22关注</span><span>22粉丝</span></div>
+      <!-- 用户信息 -->
+      <div class="my-message">
+        <div class="ddd"></div>
+        <div class="message">
+          <span>{{ item.userNickname }}</span>
+          <span>抖音号:{{ item.id }}</span>
+        </div>
+        <!-- 个性签名 -->
+        <div class="signature">
+          <span>{{ item.userDesc }}</span>
+          <div class="female"><img src="/src/assets/my/female.png" alt="" /> {{ item.userAge }}</div>
+          <div class="zan">
+            <span>{{ byLikesNum }}获赞</span><span>{{ FollowersNum }}关注</span><span>{{ FansNum }}粉丝</span>
+          </div>
+        </div>
       </div>
     </div>
+
     <div class="warp">
+      <!-- tab栏 -->
       <div class="tab">
-        <router-link class="active" to="/my/video">作品1</router-link>
-        <router-link to="/my/videoAndDesc">动态1</router-link>
-        <router-link to="/my/likes">喜欢1</router-link>
+        <router-link class="active" to="/my/video">作品{{VideosNum}}</router-link>
+        <router-link to="/my/videoAndDesc">动态{{VideosNum}}</router-link>
+        <router-link to="/my/likes">喜欢{{LikesNum}}</router-link>
       </div>
+      <!-- 作品内容 -->
       <div>
         <router-view></router-view>
       </div>
@@ -35,8 +46,65 @@
 
 <script setup>
 import tabbar from '../../components/comcom/tabbar.vue'
+import { getgetUserInfoAPI, getbyLikesNumAPI, getFansNumAPI, getFollowersNumAPI
+,getVideosNumAPI,getLikesNumPI } from '../../api/my.js'
+import { ref, onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
+onMounted(() => {
+  getUserInfo()
+  getFollowersNum()
+  getFansNum()
+  getbyLikesNum()
+  getVideosNum()
+  getLikesNum()
+})
+// 获取用户请求
+const userlist = reactive([])
+const getUserInfo = async () => {
+  let res = await getgetUserInfoAPI()
+  userlist.push(res.data.data)
+  console.log(userlist)
+}
+
+// 关注
+const FollowersNum = ref('')
+const getFollowersNum = async () => {
+  let res = await getFollowersNumAPI()
+  FollowersNum.value = res.data.data
+  console.log(res)
+}
+
+// 粉丝
+const FansNum = ref('')
+const getFansNum = async () => {
+  let res = await getFansNumAPI()
+  FansNum.value = res.data.data
+  console.log(res)
+}
+// 获赞
+const byLikesNum = ref('')
+const getbyLikesNum = async () => {
+  let res = await getbyLikesNumAPI()
+  byLikesNum.value = res.data.data
+  console.log(res)
+}
+
+//  作品和 动态
+const VideosNum = ref('')
+const getVideosNum = async () => {
+  let res = await getVideosNumAPI()
+  VideosNum.value = res.data.data
+  console.log(res)
+}
+
+// 我喜欢视频
+const LikesNum = ref('')
+const getLikesNum = async () => {
+  let res = await getLikesNumPI()
+  LikesNum.value = res.data.data
+  console.log(res)
+}
 </script>
 
 <style lang="scss" scoped>
@@ -65,12 +133,12 @@ const router = useRouter()
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50px;
+  border-radius: 1rem;
   background: rgb(29, 29, 29);
   img {
     width: 1.8rem;
     height: 1.8rem;
-    border-radius: 50px;
+    border-radius: 1rem;
   }
 }
 .my-message {
@@ -118,7 +186,9 @@ const router = useRouter()
   }
 }
 .warp {
+  margin-top: 0.2rem;
   .tab {
+    background: rgb(30, 30, 30);
     display: flex;
     align-items: center;
     justify-content: space-evenly;

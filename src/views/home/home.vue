@@ -1,18 +1,21 @@
 <template>
   <div class="home">
+    <!-- 搜索按钮 -->
     <img class="search-img" @click="tosearch" src="/src/assets/home/search.png" alt="" />
-
+    <!-- 首页视频 -->
     <div class="box" :class="{ animsteClass: flag }" v-for="(item, index) in videolist" :key="item.id" :style="{ transform: `translateY(${y}px)`, paddingTop: (moveindex ? moveindex - 1 : 0) * clientY + 'px' }" @touchstart="start" @touchmove="move" @touchend="end($event, index)">
       <div class="top">
+        <!-- 一个空的 -->
         <!-- <img @click="tosearch" src="/src/assets/home/search.png" alt="" /> -->
       </div>
-        {{ videoIndex }}
-        <!-- :src="item.Video.videoPath" -->
-      <div class="middle" @click="changeVideoplay" >
-        <video cless="video" ref="videos"  @click="playClick" v-if="item"  style="width: 100%; height: 100%; object-fit: fill" autoplay controls loop muted showPlay @play="videoIsPlay = true" @pause="videoIsPlay = false" @ended="videoIsPlay = false"></video>
+      {{ videoIndex }}
+      <!-- 视频盒子 :src="item.Video.videoPath" -->
+      <div class="middle" @click="changeVideoplay">
+        <video cless="video" ref="videos" @click="playClick" v-if="item" style="width: 100%; height: 100%; object-fit: fill" autoplay controls loop muted showPlay @play="videoIsPlay = true" @pause="videoIsPlay = false" @ended="videoIsPlay = false"></video>
+        <!-- 暂停按钮 -->
         <img class="kaishi" v-show="videoIsPlay" src="/src/assets/home/kaishi.png" alt="" />
-        <!-- <img class="videoIsPlay" v-show="!videoIsPlay" @click="changeVideopause" src="/src/assets/home/zanting.png" alt="" /> -->
       </div>
+      <!-- 视频内容 -->
       <div class="bottom">
         <div class="content">
           <div><img class="weizhi" src="/src/assets/home/weizhi.png" alt="" /> 北京市</div>
@@ -20,18 +23,22 @@
           <div>{{ item.Video.videoDesc }}</div>
         </div>
       </div>
+      <!-- 用户头像 -->
       <div class="avatar">
         <img :src="`http://43.138.15.137:3000` + item.Video.userAvatar" alt="" />
       </div>
+      <!-- 点赞的爱心 -->
       <div class="icon" @click="getlike(item)">
-        <img v-if="!item.isshowlike" src="/src/assets/home/like.png" alt="" />
+        <img v-if="item.isshowlike == false" src="/src/assets/home/like.png" alt="" />
         <img v-else src="/src/assets/home/likered.png" alt="" />
         <span>{{ item.WSLCNum.likeNum }}</span>
       </div>
+      <!-- 评论 -->
       <div class="icon2">
         <img @click="getreview(item)" src="/src/assets/home/message.png" alt="" />
         <span>{{ item.WSLCNum.commentNum }}</span>
       </div>
+      <!-- 分享 -->
       <div class="icon3">
         <img src="/src/assets/home/share.png" alt="" />
         <span>{{ item.WSLCNum.shareNum }}</span>
@@ -39,9 +46,9 @@
     </div>
 
     <!-- 评论的弹出框 -->
-    <commentBbox :isreview="isreview"  @getreviews="getreviews" :reviewlist='reviewlist' @getreview='getreview' :reviewval='reviewval' @reviewinp='reviewinp'> </commentBbox>
+    <commentBbox :isreview="isreview" @getreviews="getreviews" :reviewlist="reviewlist" @getreview="getreview" :reviewval="reviewval" @reviewinp="reviewinp"> </commentBbox>
     <!-- <div class="review" v-show="isreview" @touchmove.prevent> -->
-      <!-- <div class="box" @touchmove.prevent>
+    <!-- <div class="box" @touchmove.prevent>
         <div class="review-top">
           <span></span>
           <span>{{ reviewlist.length }}条评论</span>
@@ -62,7 +69,7 @@
               <span>{{ item.likeNum }}</span>
             </div> -->
 
-            <!-- <div class="publish">
+    <!-- <div class="publish">
               <input v-model="reviewval" @keydown.enter="reviewinp" type="text" placeholder="多一次评论，多一份理解" />
               <div>
                 <span>@</span>
@@ -71,9 +78,8 @@
             </div>
           </div>
         </div> -->
-      <!-- </div> -->
     <!-- </div> -->
-
+    <!-- </div> -->
 
     <tabbar></tabbar>
   </div>
@@ -82,18 +88,18 @@
 <script setup>
 // 引入评论弹框组件
 import commentBbox from '../../components/comcom/comment-box.vue'
+// 
 import tabbar from '../../components/comcom/tabbar.vue'
 // 引入消息 文件
 import MessageMainVue from '../../components/js/message.js'
 import { getPopularVideoAPI, triggerLikeAPI, getVideoCommentAPI, commentVideoAPI, triggerLikeCommentAPI } from '../../api/home.js'
-import { onMounted, ref, reactive, renderList, computed,defineComponent ,defineEmits} from 'vue'
+import { onMounted, ref, reactive, renderList, computed, defineComponent, defineEmits } from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 const videolist = reactive([])
-
+// 
 onMounted(() => {
   video()
-
 })
 
 // 获取视频
@@ -111,8 +117,7 @@ const video = async () => {
 }
 
 // //
-// const islike = ref(true)
-// const islikered = ref(false)
+
 // 点赞
 const getlike = async (item) => {
   item.isshowlike = !item.isshowlike
@@ -132,7 +137,6 @@ const getlike = async (item) => {
   }
 }
 
-
 //  const box=ref(null)
 //  console.log(box);
 // 视频的上下滑动
@@ -143,8 +147,8 @@ let y = ref(0)
 const startY = ref()
 const startMoveY = ref()
 const flag = ref(false)
-const videos=ref(null)
-console.log(videos);
+const videos = ref(null)
+console.log(videos)
 
 const start = (e) => {
   // 判断手指在页面的位置
@@ -210,17 +214,17 @@ const end = (e, index) => {
 
 // 视频开始暂停
 const videoIsPlay = ref(false)
-const videoIndex=ref(0)
-const changeVideoplay=()=>{
-  console.log('111');
-   // 获得所有的播放器
-    let videoS = document.querySelectorAll('.video')
-    console.log(videoS);
+const videoIndex = ref(0)
+const changeVideoplay = () => {
+  console.log('111')
+  // 获得所有的播放器
+  let videoS = document.querySelectorAll('.video')
+  console.log(videoS)
 
-    // console.log(videoIndex.value);
-    // videoS[videoIndex.value].play() //开始播放
+  // console.log(videoIndex.value);
+  // videoS[videoIndex.value].play() //开始播放
 
-      videoIsPlay.value = !videoIsPlay.value
+  videoIsPlay.value = !videoIsPlay.value
   if (videoIsPlay.value) {
     video.value[index].play()
   } else {
@@ -249,11 +253,11 @@ const isreview = ref(false)
 const reviewlist = ref([])
 const reviewval = ref('')
 const ispllike = ref(true)
-const plvideoId=ref('')
+const plvideoId = ref('')
 const getreview = async (item) => {
   console.log(item)
   isreview.value = true
-  plvideoId.value=item.Video.videoId
+  plvideoId.value = item.Video.videoId
   let res = await getVideoCommentAPI(plvideoId.value)
   console.log(res)
   reviewlist.value = res.data.data
@@ -266,7 +270,6 @@ const getreview = async (item) => {
 const getreviews = () => {
   isreview.value = !isreview.value
 }
-
 
 // 发表评论
 const reviewinp = async (reviewval) => {
@@ -338,32 +341,32 @@ const tosearch = () => {
 }
 /* 隐藏video 全屏按钮 */
 video::-webkit-media-controls-fullscreen-button {
-		display: none;
+  display: none;
 }
 /* 隐藏video 播放按钮 */
 
 /* 隐藏video 进度条 */
 video::-webkit-media-controls-timeline {
-		display: none;
+  display: none;
 }
 /* 隐藏video 观看的当前时间 */
-video::-webkit-media-controls-current-time-display{
-		display: none;            
+video::-webkit-media-controls-current-time-display {
+  display: none;
 }
 /* 隐藏video 剩余时间 */
 video::-webkit-media-controls-time-remaining-display {
-		display: none;            
+  display: none;
 }
 /* 隐藏video 音量按钮 */
 video::-webkit-media-controls-mute-button {
-		display: none;            
+  display: none;
 }
 video::-webkit-media-controls-toggle-closed-captions-button {
-		display: none;            
+  display: none;
 }
 /* 隐藏video 音量的控制条 */
 video::-webkit-media-controls-volume-slider {
-		display: none;            
+  display: none;
 }
 
 .home {
