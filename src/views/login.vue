@@ -64,7 +64,7 @@ const tologin = () => {
 let obj = reactive({
   isSend: false, //禁用
   codeName: '发送验证码',
-  totalTime: 10, //一般是60
+  totalTime: 60, //一般是60
   timer: '' //定时器
 })
 
@@ -85,7 +85,7 @@ const code = async () => {
     if (obj.totalTime < 0) {
       clearInterval(obj.timer)
       obj.codeName = '重新发送验证码'
-      obj.totalTime = 10
+      obj.totalTime = 60
       obj.isSend = false
     }
   }, 1000)
@@ -212,14 +212,14 @@ const tohome = () => {
 .v-leave-to {
   // 离开的开始状态，进入的开始状态
   opacity: 0; /*透明度*/
-  transform: translateX(150px);
+  transform: translateX(-150px);
 }
 
 .v-leave,
 .v-enter-to {
   // 进入的开始状态，离开的开始状态
   opacity: 1; /*透明度*/
-  transform: translateY(150px);
+  transform: translateX(150px);
 }
 .v-enter-active {
   // 进入的动画 过程
@@ -234,7 +234,7 @@ const tohome = () => {
 .my-enter,
 .my-leave-to {
   opacity: 0; /*透明度*/
-  transform: translateY(100px);
+  transform: translateX(150px);
 }
 
 .my-enter-active,

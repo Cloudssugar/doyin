@@ -8,12 +8,11 @@
         <!-- 一个空的 -->
         <!-- <img @click="tosearch" src="/src/assets/home/search.png" alt="" /> -->
       </div>
-      {{ videoIndex }}
-      <!-- 视频盒子 :src="item.Video.videoPath" -->
+      <!-- 视频盒子 -->
       <div class="middle" @click="changeVideoplay">
-        <video cless="video" ref="videos" @click="playClick" v-if="item" style="width: 100%; height: 100%; object-fit: fill" autoplay controls loop muted showPlay @play="videoIsPlay = true" @pause="videoIsPlay = false" @ended="videoIsPlay = false"></video>
+        <video cless="video" :src="item.Video.videoPath" ref="videos" style="width: 100%; height: 100%; object-fit: fill" autoplay loop muted showPlay @click="bofang($event)"></video>
         <!-- 暂停按钮 -->
-        <img class="kaishi" v-show="videoIsPlay" src="/src/assets/home/kaishi.png" alt="" />
+        <img class="kaishi" @click="bofang" v-show="!videoIsPlay" src="/src/assets/home/kaishi.png" alt="" />
       </div>
       <!-- 视频内容 -->
       <div class="bottom">
@@ -166,7 +165,7 @@ const move = (e) => {
 const end = (e, index) => {
   // 松手时 移动的距离
   let endY = e.changedTouches[0].pageY - startY.value
-  console.log(endY)
+  // console.log(endY)
   //
   if (Math.abs(endY) < clientY / 4) {
     y.value = startMoveY.value
@@ -177,7 +176,6 @@ const end = (e, index) => {
         y.value = startMoveY.value - clientY
         videos.value[index].pause()
         videos.value[index + 1].play()
-        // moveindex.value++
       } else {
         y.value = startMoveY.value
         // 没有了
@@ -188,7 +186,6 @@ const end = (e, index) => {
         y.value = startMoveY.value - clientY
         videos.value[index].pause()
         videos.value[index - 1].play()
-        // moveindex.value--
       } else {
         y.value = startMoveY.value
         // 没有了
@@ -197,56 +194,23 @@ const end = (e, index) => {
   }
   flag.value = true
 }
-//
-// 用来记录当前项
-// const moveindex = ref(0)
-// // const renderList = reactive([])
-// computed(() => {
-//   const arr = reactive([])
-//   arr = videolist.map((item) => {
-//     if (index == moveindex.value || index == moveindex.value - 1 || index == moveindex.value + 1) {
-//       return item
-//     } else {
-//       return ''
-//     }
-//   })
-// })
+
 
 // 视频开始暂停
-const videoIsPlay = ref(false)
-const videoIndex = ref(0)
-const changeVideoplay = () => {
-  console.log('111')
-  // 获得所有的播放器
-  let videoS = document.querySelectorAll('.video')
-  console.log(videoS)
-
-  // console.log(videoIndex.value);
-  // videoS[videoIndex.value].play() //开始播放
-
+const videoIsPlay = ref(true)
+const bofang = (e) => {
   videoIsPlay.value = !videoIsPlay.value
-  if (videoIsPlay.value) {
-    video.value[index].play()
+  let num = e.currentTarget
+  console.log(num, '移动')
+  if (num.paused) {
+    num.play()
+    pauses = false
   } else {
-    video.value[index].pause()
+    num.pause()
+    pauses = true
+
   }
 }
-// const changeVideopause=()=>{
-//     // 获得所有的播放器
-//     let videoS = document.querySelectorAll('.video')
-//     console.log(videoS);
-//     // videoS[videoIndex.value].pause(); //关闭播放
-//     videoIsPlay.value = !videoIsPlay.value
-//   if (videoIsPlay.value) {
-//     video.value[index].play()
-//   } else {
-//     video.value[index].pause()
-//   }
-// }
-
-// const changeVideoStatus = (index) => {
-
-// }
 
 //评论列表
 const isreview = ref(false)
@@ -273,6 +237,7 @@ const getreviews = () => {
 
 // 发表评论
 const reviewinp = async (reviewval) => {
+
   const userId = localStorage.getItem('userId')
   let res = await commentVideoAPI({
     fromUserId: userId,
@@ -282,23 +247,13 @@ const reviewinp = async (reviewval) => {
   })
   console.log(res)
   // reviewval.value = ''
-  getreview()
+  // 重新调用接口
+ let ress = await getVideoCommentAPI(plvideoId.value)
+  console.log(res)
+  reviewlist.value = ress.data.data
   MessageMainVue({ type: 'success', text: '我评论啦' })
 }
 
-// // 评论时间
-// const date = ref('')
-// function formatTime(time) {
-//   return time < 10 ? `0${time}` : time
-// }
-// function updateTime() {
-//   const now = new Date()
-//   const year = now.getFullYear() //年
-//   const month = now.getMonth() + 1 //月
-//   const day = now.getDate() //日
-//   const hours = now.getHours() //小时数
-//   date.value = `${year}-${formatTime(month)}-${formatTime(day)} `
-// }
 // // 评论里边的点赞
 // const videoId = ref('')
 // const commentId = ref('')
@@ -373,7 +328,12 @@ video::-webkit-media-controls-volume-slider {
   width: 100%;
   height: 100vh;
   overflow: hidden;
+
+  transition: all 0.3s ease;
+
+  transition: transform 0.3s ease;
 }
+
 .search-img {
   z-index: 10;
   position: fixed;
@@ -383,7 +343,7 @@ video::-webkit-media-controls-volume-slider {
   height: 0.4rem;
 }
 .animsteClass {
-  transition: transfrom 0.5s;
+  transition: transfrom 0.5s ease;
 }
 .box {
   box-sizing: border-box;

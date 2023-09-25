@@ -18,8 +18,8 @@
                 <span>{{ formatTime(item.Comment.createdAt) }}</span>
               </div>
               <div class="like" @click="getpllike(item)">
-                <img v-if="!item.ispllike" src="/src/assets/home/like.png" alt="" />
-                <img v-else src="/src/assets/home/likered.png" alt="" />
+                <img v-if="item.ispllike==false" src="/src/assets/home/like.png" alt="" />
+                <img  v-if="item.ispllike==true" src="/src/assets/home/likered.png" alt="" />
 
                 <span>{{ item.likeNum }}</span>
               </div>
@@ -45,7 +45,7 @@
 import {formatTime} from '../../utils/formatTime.js'
 // 引入消息 文件
 import MessageMainVue from '../../components/js/message.js'
-import { reactive, ref, defineProps, defineEmits, toRefs, onMounted } from 'vue'
+import { reactive, ref, defineProps, toRefs, onMounted } from 'vue'
 import { triggerLikeCommentAPI } from '../../api/home.js'
 //此处必须用toRefs，否则将失去响应式
 const { reviewlist } = toRefs(props)
@@ -66,24 +66,15 @@ onMounted(() => {
 })
 //  发布评论
 const reviewinp = () => {
+  if( reviewval.value.trim()==''){
+    return
+  }
   emit('reviewinp', reviewval.value)
   reviewval.value = ''
   console.log(reviewval.value, '111')
 }
 
-// // 评论时间
-// const date = ref('')
-// function formatTime(time) {
-//   return time < 10 ? `0${time}` : time
-// }
-// function updateTime() {
-//   const now = new Date()
-//   const year = now.getFullYear() //年
-//   const month = now.getMonth() + 1 //月
-//   const day = now.getDate() //日
-//   const hours = now.getHours() //小时数
-//   date.value = `${year}-${formatTime(month)}-${formatTime(day)} `
-// }
+
 
 // 评论里边的点赞
 const videoId = ref('')
@@ -110,6 +101,7 @@ const getpllike = async (item) => {
 </script>
 
 <style lang="scss" scoped>
+
 .openActive {
   bottom: 0px !important;
 }
@@ -121,7 +113,7 @@ const getpllike = async (item) => {
   position: fixed;
   left: 0;
   bottom: 0;
-  background: rgb(27, 27, 27);
+  background:  rgb(27, 27, 27);
   color: rgb(194, 194, 194);
 }
 .box {

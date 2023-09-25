@@ -1,59 +1,20 @@
 <template>
   <div>
-    <div class="dynamic-state">
-      <!-- 我关注的动态 -->
-      <div class="stateitem" v-for="(item, index) in FollowerVideolist" :key="item.id">
-        <div class="top">
-          <img :src="`http://43.138.15.137:3000` + item.Video.userAvatar" alt="" />
-
-          <span>@{{ item.Video.userNickname }}</span>
-        </div>
-        <div class="cont">{{ item.Video.videoDesc }}</div>
-        <div class="video">
-          <!-- <video style="width: 100%; height: 100%; object-fit: fill"></video> -->
-          <video style="width: 100%; height: 100%; object-fit: fill" :src="item.Video.videoPath"></video>
-        </div>
-        <div class="interaction">
-          <div class="zan" @click="getzan(item)">
-            <img v-if="!item.iszanlike" src="../../assets/home/like.png" alt="" />
-            <img v-else src="../../assets/home/likered.png" alt="" />
-            <span>{{ item.WSLCNum.likeNum }}</span>
-          </div>
-          <div class="pin">
-            <img @click="getreview(item)" src="../../assets/home/message.png" alt="" />
-            <span>{{ item.WSLCNum.commentNum }}</span>
-          </div>
-          <div class="fen">
-            <img src="../../assets/home/share.png" alt="" />
-            <span>{{ item.WSLCNum.shareNum }}</span>
-          </div>
-        </div>
-        <div class="date">
-          <span>{{formatTime(item.Video.createdAt)}}</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- 评论的弹出框 -->
-    <commentBbox :isreview="isreview" @getreviews="getreviews" :reviewlist="reviewlist" @getreview="getreview" :reviewval="reviewval" @reviewinp="reviewinp"> </commentBbox>
-
-    <tabbar></tabbar>
+    <!-- 我关注的动态 -->
+    <dynamicState :FollowerVideolist='FollowerVideolist'></dynamicState>
+    <tabbar></tabbar> 
   </div>
 </template>
 
 <script setup>
-// 时间
-import {formatTime} from '../../utils/formatTime.js'
+
+import dynamicState from '../../components/comcom/dynamic-state.vue'
 import tabbar from '../../components/comcom/tabbar.vue'
-// 引入评论弹框组件
-import commentBbox from '../../components/comcom/comment-box.vue'
-// 引入消息 文件
-import MessageMainVue from '../../components/js/message.js'
-import { getVideoCommentAPI, commentVideoAPI } from '../../api/home.js'
-import { getFollowerVideoAPI, getFollowerVideotriggerLikeAPI } from '../../api/attention.js'
+import { getFollowerVideoAPI,} from '../../api/attention.js'
 import { ref, onMounted, reactive } from 'vue'
 onMounted(() => {
   getFollowerVideo()
+  let iszanlike=localStorage.getItem('iszanlike')
     // getreview()
 })
 // 获取数据
@@ -67,143 +28,71 @@ const getFollowerVideo = async () => {
   }
 }
 
-// 动态点赞
-// const iszanlike = ref(false)
-const attvideoId = ref('')
-const getzan = async (item) => {
-  console.log(item)
-  attvideoId.value = item.Video.videoId
-  let res = await getFollowerVideotriggerLikeAPI(attvideoId.value)
-  console.log(res)
-  MessageMainVue({ type: 'success', text: res.data.data })
-  if (attvideoId.value == item.Video.videoId) {
-    if (res.data.data == '喜欢成功') {
-      item.WSLCNum.likeNum++
-      item.iszanlike = true
-      console.log(item.WSLCNum.likeNum)
-    } else {
-      item.WSLCNum.likeNum--
-      item.iszanlike = false
-      console.log(item.WSLCNum.likeNum)
-    }
-  }
-}
+// // 动态点赞
+// // const iszanlike = ref(false)
+// const attvideoId = ref('')
+// const getzan = async (item) => {
+//   console.log(item)
+//   attvideoId.value = item.Video.videoId
+//   let res = await getFollowerVideotriggerLikeAPI(attvideoId.value)
+//   console.log(res)
+//   MessageMainVue({ type: 'success', text: res.data.data })
+//   if (attvideoId.value == item.Video.videoId) {
+//     if (res.data.data == '喜欢成功') {
+//       item.WSLCNum.likeNum++
+//       item.iszanlike = true
+//       localStorage.setItem('iszanlike', item.iszanlike)
+//       console.log(item.WSLCNum.likeNum)
+//     } else {
+//       item.WSLCNum.likeNum--
+//       item.iszanlike = false
+//         localStorage.setItem('iszanlike', item.iszanlike)
+//       console.log(item.WSLCNum.likeNum)
+//     }
+//   }
+// }
 
 
-//评论列表
-const isreview = ref(false)
-const reviewlist = ref([])
-const reviewval = ref('')
-const ispllike = ref(true)
-const zanvideoId=ref('')
-const getreview = async (item) => {
-  console.log(item)
-  isreview.value = true
-  zanvideoId.value=item.Video.videoId
-  let res = await getVideoCommentAPI( zanvideoId.value)
-  console.log(res)
-  reviewlist.value = res.data.data
-  for (let i = 0; i < reviewlist.value.length; i++) {
-    reviewlist.value[i].ispllike = false
-  }
-}
+// //评论列表
+// const isreview = ref(false)
+// const reviewlist = ref([])
+// const reviewval = ref('')
+// const ispllike = ref(true)
+// const zanvideoId=ref('')
+// const getreview = async (item) => {
+//   console.log(item)
+//   isreview.value = true
+//   zanvideoId.value=item.Video.videoId
+//   let res = await getVideoCommentAPI( zanvideoId.value)
+//   console.log(res)
+//   reviewlist.value = res.data.data
+//   for (let i = 0; i < reviewlist.value.length; i++) {
+//     reviewlist.value[i].ispllike = false
+//   }
+// }
 
-// 关闭弹框
-const getreviews = () => {
-  isreview.value = !isreview.value
-}
+// // 关闭弹框
+// const getreviews = () => {
+//   isreview.value = !isreview.value
+// }
 
 
-// 发表评论
-const reviewinp = async (reviewval) => {
-  const userId = localStorage.getItem('userId')
-  // const videoId = localStorage.getItem('videoId')
-  let res = await commentVideoAPI({
-    fromUserId: userId,
-    replyId: '',
-    content: reviewval,
-    toVideoId: zanvideoId.value
-  })
-  console.log(res)
-  // reviewval.value = ''
-  getreview()
-  MessageMainVue({ type: 'success', text: '我评论啦' })
-}
+// // 发表评论
+// const reviewinp = async (reviewval) => {
+//   const userId = localStorage.getItem('userId')
+//   // const videoId = localStorage.getItem('videoId')
+//   let res = await commentVideoAPI({
+//     fromUserId: userId,
+//     replyId: '',
+//     content: reviewval,
+//     toVideoId: zanvideoId.value
+//   })
+//   console.log(res)
+//   // reviewval.value = ''
+//   getreview()
+//   MessageMainVue({ type: 'success', text: '我评论啦' })
+// }
+
 </script>
 
-<style lang="scss" scoped>
-div {
-  background: rgb(0, 0, 0);
-  color: white;
-}
-.dynamic-state {
-  padding-bottom: 0.8rem;
-  width: 100%;
-  color: white;
-  .stateitem {
-    width: 95%;
-    padding-left: 0.3rem;
-    padding-bottom: 0.4rem;
-    padding-top: 0.4rem;
-    .top {
-      width: 100%;
-      img {
-        width: 0.8rem;
-        height: 0.8rem;
-        border-radius: 1rem;
-        vertical-align: middle;
-      }
-      span {
-        padding-left: 0.2rem;
-        font-size: 0.3rem;
-      }
-    }
-    .cont {
-      font-size: 0.3rem;
-      margin-top: 0.2rem;
-    }
-    .video {
-      margin-left: 0.2rem;
-      margin-top: 0.2rem;
-      width: 4.8rem;
-      height: 6rem;
-    }
-    .interaction {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 50%;
-      height: 1rem;
-      .zan {
-        img {
-          margin-right: 0.1rem;
-          vertical-align: top;
-          width: 0.4rem;
-          height: 0.4rem;
-        }
-      }
-      .pin {
-        img {
-          vertical-align: top;
-          margin-right: 0.1rem;
-          width: 0.4rem;
-          height: 0.4rem;
-        }
-      }
-      .fen {
-        img {
-          vertical-align: top;
-          margin-right: 0.1rem;
-          width: 0.4rem;
-          height: 0.4rem;
-        }
-      }
-    }
-    .date {
-      font-size: 0.24rem;
-      color: #d2d2d2;
-    }
-  }
-}
-
-</style>
+<style lang="scss" scoped></style>

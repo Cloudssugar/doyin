@@ -1,15 +1,3 @@
-export const regEmail = /^([a-zA-Z0-9]+[_|.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/
-export const regVideoUrl = /^https?.+\.(mp4|avi|flv|mpg|rm|mov|asf|3gp|mkv|rmvb)$/i
-export const regCoverUrl = /^https?.+\.(jpg|jpeg|gif|png|bmp)$/i
-export function debounce(func, delay, ctx) {
-  let timer = null
-  return function (...args) {
-    timer && clearTimeout(timer)
-    timer = setTimeout(() => {
-      func.apply(ctx, args)
-    }, delay)
-  }
-}
 
 export function formatTime(Timestamp) {
   const CreatedAt = new Date(Timestamp)
@@ -57,20 +45,4 @@ export const parseChatTime = (old_time) => {
   return `${dayArr[old.getDay()]} ${format_hour}:${format_minutes}`
 }
 
-export function deduplicateCommentList(list) {
-  for (let i = 0; i < list.length; i++) {
-    for (let j = i + 1; j < list.length; j++) {
-      if (list[i].Comment.commentId === list[j].Comment.commentId) list.splice(j, 1)
-    }
-  }
-  return list
-}
 
-export function deduplicatePrivateLetter(list) {
-  for (let i = 0; i < list.length; i++) {
-    for (let j = i + 1; j < list.length; j++) {
-      if (list[i].fromId === list[j].fromId) list.splice(j, 1)
-    }
-  }
-  return list
-}

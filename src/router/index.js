@@ -46,6 +46,31 @@ const routes = [
     component: () => import(/* webpackChunkName: 'importPage' */ '../views/message/message.vue')
   },
   {
+    path: '/vermicelli',
+    name: 'vermicelli',
+    component: () => import(/* webpackChunkName: 'importPage' */ '../views/message/vermicelli.vue')
+  },
+  {
+    path: '/zan',
+    name: 'zan',
+    component: () => import(/* webpackChunkName: 'importPage' */ '../views/message/zan.vue')
+  },
+  {
+    path: '/at',
+    name: 'at',
+    component: () => import(/* webpackChunkName: 'importPage' */ '../views/message/at.vue')
+  },
+  {
+    path: '/review',
+    name: 'review',
+    component: () => import(/* webpackChunkName: 'importPage' */ '../views/message/review.vue')
+  },
+  {
+    path: '/contact',
+    name: 'contact',
+    component: () => import(/* webpackChunkName: 'importPage' */ '../views/message/contact.vue')
+  },
+  {
     path: '/my',
     name: 'my',
     component: () => import(/* webpackChunkName: 'importPage' */ '../views/my/my.vue'),

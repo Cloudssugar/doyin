@@ -2,7 +2,7 @@
   <div>
     <!-- 我的 作品 喜欢  -->
     <div class="likesnumlist">
-      <div class="likeitem" v-for="(item, index) in videolikeslist" :key="item.id">
+      <div class="likeitem" v-for="(item, index) in videolikeslist.reverse()" :key="item.id">
         <div class="likeimg">
           <video style="width: 100%; height: 100%; object-fit: fill" :src="item.Video.videoPath"></video>
         </div>
