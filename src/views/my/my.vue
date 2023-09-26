@@ -8,27 +8,27 @@
     <!-- 更多弹框 -->
     <transition name="morebox">
       <div class="more-box" v-show="ismore">
-        <span>修改个人资料</span>
+        <span  @click="touserinfo">修改个人资料</span>
         <span>注销</span>
       </div>
     </transition>
 
-    <div v-for="(item, index) in userlist" :key="item.id">
+    <div >
       <!-- 头像 -->
       <div class="avatar">
-        <img :src="`http://43.138.15.137:3000` + item.userAvatar" alt="" />
+        <img :src="`http://43.138.15.137:3000` + userlist.userAvatar" alt="" />
       </div>
       <!-- 用户信息 -->
       <div class="my-message">
         <div class="ddd"></div>
         <div class="message">
-          <span>{{ item.userNickname }}</span>
-          <span>抖音号:{{ item.id }}</span>
+          <span>{{ userlist.userNickname }}</span>
+          <span>抖音号:{{ userlist.id }}</span>
         </div>
         <!-- 个性签名 -->
         <div class="signature">
-          <span>{{ item.userDesc }}</span>
-          <div class="female"><img src="/src/assets/my/female.png" alt="" /> {{ item.userAge }}</div>
+          <span>{{ userlist.userDesc }}</span>
+          <div class="female"><img src="/src/assets/my/female.png" alt="" /> {{ userlist.userAge }}</div>
           <div class="zan">
             <span>{{ byLikesNum }} 获赞</span><span>{{ FollowersNum }} 关注</span><span>{{ FansNum }} 粉丝</span>
           </div>
@@ -67,11 +67,15 @@ onMounted(() => {
   getLikesNum()
 })
 // 获取用户请求
-const userlist = reactive([])
+const userlist = ref({})
 const getUserInfo = async () => {
   let res = await getgetUserInfoAPI()
-  userlist.push(res.data.data)
-  console.log(userlist)
+  console.log(res,'信息');
+  // userlist.push(res.data.data)
+  userlist.value=res.data.data
+
+  // console.log(userlist.value)
+  localStorage.setItem('userlist',JSON.stringify(userlist.value))
 }
 
 // 关注
@@ -79,7 +83,7 @@ const FollowersNum = ref('')
 const getFollowersNum = async () => {
   let res = await getFollowersNumAPI()
   FollowersNum.value = res.data.data
-  console.log(res)
+  // console.log(res)
 }
 
 // 粉丝
@@ -87,14 +91,14 @@ const FansNum = ref('')
 const getFansNum = async () => {
   let res = await getFansNumAPI()
   FansNum.value = res.data.data
-  console.log(res)
+  // console.log(res)
 }
 // 获赞
 const byLikesNum = ref('')
 const getbyLikesNum = async () => {
   let res = await getbyLikesNumAPI()
   byLikesNum.value = res.data.data
-  console.log(res)
+  // console.log(res)
 }
 
 //  作品和 动态
@@ -102,7 +106,7 @@ const VideosNum = ref('')
 const getVideosNum = async () => {
   let res = await getVideosNumAPI()
   VideosNum.value = res.data.data
-  console.log(res)
+  // console.log(res)
 }
 
 // 我喜欢视频
@@ -110,13 +114,18 @@ const LikesNum = ref('')
 const getLikesNum = async () => {
   let res = await getLikesNumPI()
   LikesNum.value = res.data.data
-  console.log(res)
+  // console.log(res)
 }
 
 //
 const ismore = ref(false)
 const more = () => {
   ismore.value = !ismore.value
+}
+
+const touserinfo=()=>{
+   ismore.value = !ismore.value
+   router.push('userinfo')
 }
 </script>
 

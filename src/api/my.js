@@ -44,4 +44,7 @@ export function getLikesAPI(params) {
   return http.get(`api/user/${userId}/Likes/page/1`)
 }
 
-// http://43.138.15.137:3000/api/user/efe6a71d-636b-4443-95e1-9b72fe451b09/Likes/page/1
+// 修改个人信息
+export function modifyUserInfoAPI(params) {
+  return http.post(`api/user/${userId}/modifyUserInfo`,params)
+}

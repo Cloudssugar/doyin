@@ -91,6 +91,11 @@ const routes = [
         component: () => import(/* webpackChunkName: "about" */ '../views/my/likes.vue')
       }
     ]
+  },
+  {
+    path: '/userinfo',
+    name: 'userinfo',
+    component: () => import(/* webpackChunkName: "about" */ '../views/my/userinfo.vue')
   }
 ]
 const router = createRouter({
