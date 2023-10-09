@@ -1,0 +1,198 @@
+<template>
+  <div>
+    <div>
+      <!-- 顶部栏 -->
+      <div class="top" @click="tomessage">
+        <img src="../../assets/home/jiantou.png" alt="" @click="toback" />
+        <span>{{ chatlist.userNickname }}</span>
+      </div>
+      <!--  -->
+      <div class="box">
+        <div ref="messageref">
+          <div class="messagelist">
+            <!-- 我的聊天消息 -->
+            <div class="messageitem left">
+              <div class="hearimg">
+                <img src="../../assets/img/c75ae7128274356b4033ab6464338b67.jpg" alt="" />
+              </div>
+
+              <div class="message">111</div>
+              <!-- 聊天框的小三角 -->
+              <div class="triangle-left"></div>
+            </div>
+            <!-- 好友的聊天消息 -->
+            <div class="messageitem right">
+              <div class="hearimg">
+                <img :src="`http://43.138.15.137:3000` + chatlist.userAvatar" alt="" />
+              </div>
+              <!-- 聊天框的小三角 -->
+              <div class="triangle-right"></div>
+              <div class="message">1111</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 发送消息 -->
+        <div class="replycom">
+          <input type="text" placeholder="发送消息" name="" id="" />
+          <div class="reply">
+            <span>@</span>
+            <span><img src="../../assets/home/tick.png" alt="" /></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted, reactive } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+const router = useRouter()
+const route = useRoute()
+
+const tomessage = () => {
+  router.go(-1)
+}
+//
+console.log(JSON.parse(route.params.id))
+const chatlist = ref()
+chatlist.value = JSON.parse(route.params.id)
+</script>
+
+<style lang="scss" scoped>
+div {
+  color: white;
+}
+.top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 20;
+  width: 100%;
+  height: 0.8rem;
+  border-bottom: 1px solid rgb(242, 242, 242);
+  display: flex;
+  align-items: center;
+
+  img {
+    margin-left: 0.2rem;
+    width: 0.4rem;
+    height: 0.4rem;
+  }
+  span {
+    padding-left: 40%;
+    font-size: 0.3rem;
+  }
+}
+.box {
+  margin-bottom: 0.8rem;
+  margin-top: 0.8rem;
+}
+.messagelist {
+  width: 100%;
+  .messageitem {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding-bottom: 0.2rem;
+    padding-top: 0.2rem;
+    .message {
+      max-width: 2rem;
+
+      padding-left: 0.2rem;
+      padding-right: 0.2rem;
+      height: 0.6rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 5px;
+    }
+    .hearimg {
+      width: 1rem;
+      height: 1rem;
+      img {
+        width: 1rem;
+        height: 1rem;
+        border-radius: 1rem;
+      }
+    }
+  }
+  .left {
+    position: relative;
+    display: flex;
+    flex-direction: row-reverse;
+    .hearimg {
+      margin-right: 0.2rem;
+    }
+    .message {
+      z-index: 10;
+      background: skyblue;
+      margin-right: 0.3rem;
+    }
+  }
+  .right {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    .hearimg {
+      margin-left: 0.2rem;
+    }
+    .message {
+      z-index: 10;
+      color: black;
+      background: rgb(215, 220, 222);
+      margin-left: 0.3rem;
+    }
+  }
+  .triangle-left {
+    position: absolute;
+    top: 0.45rem;
+    right:1.2rem;
+    width: 0;
+    height: 0;
+    border: 8px solid transparent;
+    border-left-color: skyblue; /* 设置正方形左边框颜色不为透明 */
+  }
+  .triangle-right {
+    position: absolute;
+    top: 0.45rem;
+    left:1.2rem;
+    width: 0;
+    height: 0;
+    border: 8px solid transparent;
+    border-right-color: rgb(215, 220, 222); /* 设置正方形左边框颜色不为透明 */
+  }
+}
+.replycom {
+  z-index: 20;
+  width: 100%;
+  height: 45px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  border-top: 1px solid white;
+  input {
+    width: 100%;
+    height: 100%;
+    padding-left: 0.4rem;
+    box-sizing: border-box;
+    background: rgb(29, 28, 28);
+    color: white;
+    border: none;
+  }
+  .reply {
+    position: absolute;
+    top: 0.3rem;
+    right: 0;
+    width:1.2rem;
+    display: flex;
+    justify-content: space-around;
+    background: rgb(29, 28, 28);
+    img {
+      width: 0.4rem;
+      height: 0.4rem;
+    }
+  }
+}
+</style>

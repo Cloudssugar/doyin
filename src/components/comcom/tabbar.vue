@@ -8,6 +8,7 @@
       </router-link>
       <router-link to="/message">消息</router-link>
       <router-link to="/my/video">我</router-link>
+      <div class="info" ></div>
     </div>
   </div>
 </template>
@@ -57,5 +58,16 @@ const router = useRouter()
 }
 a {
   color: rgb(157, 157, 157);
+}
+.info {
+  position: absolute;
+  top: 0.2rem;
+  left: 76%;
+  width: 0.2rem;
+  height: 0.2rem;
+  background: orange;
+  display: block;
+  margin-left: 0.1rem;
+  border-radius: 50px;
 }
 </style>

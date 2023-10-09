@@ -48,3 +48,27 @@ export function getLikesAPI(params) {
 export function modifyUserInfoAPI(params) {
   return http.post(`api/user/${userId}/modifyUserInfo`,params)
 }
+
+// 头像上传
+export function uploadAvatarAPI(params) {
+  return http.post(`api/user/${userId}/uploadAvatar`,params)
+}
+
+
+
+
+// 我的关注列表
+export function getFollowersAPI(params) {
+  return http.get(`api/user/${userId}/Followers/page/1/${userId}`,)
+}
+
+// 我的关注的关注
+export function gettriggerFollowAPI(params) {
+  return http.get(`api/user/${userId}/triggerFollow/${params}`,)
+}
+
+// 我的关注的关注
+export function getFansAPI(params) {
+  return http.get(`api/user/${userId}/Fans/page/1/${params}`,)
+}
+

@@ -21,7 +21,7 @@
               <p>{{ item.userNickname }}</p>
               <p>{{ item.userDesc }}</p>
             </div>
-            <div class="guai">
+            <div class="guai" @click="tochat(item)">
               <img src="/src/assets/message/message.png" alt="" />
             </div>
           </div>
@@ -54,6 +54,15 @@ onMounted(() => {
   getContact()
 })
 
+const tochat = (item) => {
+  console.log(item)
+  router.push({
+    name: 'chat',
+    params: {
+      id: JSON.stringify(item) 
+    }
+  })
+}
 // computed(()=>{
 //   contactlist=()=>{
 //     return contactlist.filter(item=>{
@@ -70,22 +79,8 @@ const getContact = async () => {
 }
 // 搜索用户
 const searchval = ref('')
-const searchinp = () => {
-
-  if (searchval.value.trim() == '') {
-    return false
-  }
-  let val = searchval.value
-  if (val) {
-    console.log('123');
-    searchval.value = contactlist.value.filter(function (a) {
-      //通过鲁律数据赋值给新数组可实现重复搜索
-      return Object.keys(a).some(function (key) {
-        return String(a['name']).toLowerCase().indexOf(val) > -1
-      })
-    })
-  }
-}
+const contactlists = ref([])
+const searchinp = (value) => {}
 const tomessage = () => {
   router.push('/message')
 }

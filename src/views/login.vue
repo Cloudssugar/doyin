@@ -1,6 +1,6 @@
 <template>
   <div class="box">
-    <transition >
+    <transition>
       <div class="box1" v-show="islogin">
         <div class="top">
           <img @click="tohome" src="/src/assets/home/cross.png" alt="" />
@@ -24,9 +24,9 @@
         </div>
         <div class="login">
           <p>注册</p>
-          <input type="text" v-model="email" placeholder="输入邮箱" />
+          <input type="text" @blur="blur" v-model="email" placeholder="输入邮箱" />
           <input type="password" v-model="password" placeholder="输入密码" />
-          <input type="text"   v-model="codes" placeholder="输入验证码" />
+          <input type="text" v-model="codes" placeholder="输入验证码" />
           <div class="code" @click="code">
             {{ obj.codeName }}
             <!-- <span v-if="obj.show">发送验证码</span> -->
@@ -75,13 +75,18 @@ const codes = ref('')
 const code = async () => {
   if (obj.isSend) return
   //接口
-  let res = await getCodeAPI(email.value)
+  console.log('请求接口');
+  // let res = await getCodeAPI(email.value)
+  // console.log(res)
+  // if (res.data == 200) {
+  //   MessageMainVue({ type: 'warn', text: '验证码发送成功' })
+  // }
   obj.isSend = true
   obj.codeName = obj.totalTime + 's后重新发送'
   obj.timer = setInterval(() => {
     obj.totalTime--
     obj.codeName = obj.totalTime + 's后重新发送'
-     //当倒计时小于0时清除定时器
+    //当倒计时小于0时清除定时器
     if (obj.totalTime < 0) {
       clearInterval(obj.timer)
       obj.codeName = '重新发送验证码'
@@ -92,10 +97,16 @@ const code = async () => {
 }
 // 注册
 const register = async () => {
+  const emailReg = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
+  if (!emailReg.test(email.value)) {
+    // alert('邮箱错误')
+    MessageMainVue({ type: 'warn', text: '邮箱或密码错误' })
+  }
+  //
   let res = await postregisterAPI({
     email: email.value,
     password: password.value,
-    code: code.value
+    code: codes.value
   })
   console.log(res)
 
@@ -107,9 +118,21 @@ const register = async () => {
 // 失去焦点显示登录按钮
 const showlogin = ref(true)
 const blur = () => {
-  if (email.value == '') {
+  const emailReg = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
+  if (!emailReg.test(email.value)) {
+    // alert('邮箱错误')
     console.log('11')
+    MessageMainVue({ type: 'warn', text: '邮箱或密码错误' })
+  }
+  if (email.value == '') {
+    const emailReg = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
+    if (!emailReg.test(email.value)) {
+      // alert('邮箱错误')
+      console.log('22')
+      MessageMainVue({ type: 'warn', text: '邮箱或密码错误' })
+    }
     showlogin.value = false
+    password.value = ''
   } else {
     showlogin.value = true
   }
@@ -119,7 +142,7 @@ const login = async () => {
   const emailReg = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
   if (!emailReg.test(email.value)) {
     // alert('邮箱错误')
-    MessageMainVue({ type: 'warn', text: '邮箱错误' })
+    MessageMainVue({ type: 'warn', text: '邮箱或密码错误' })
   }
   let res = await postloginAPI({
     email: email.value,
@@ -197,7 +220,7 @@ const tohome = () => {
     margin-top: 20px;
   }
   .code {
-    width: 90px;
+    width: 1.8rem;
     height: 0.7rem;
     font-size: 12px;
     background: rgb(239, 239, 239);

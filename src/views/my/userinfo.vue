@@ -10,7 +10,7 @@
     <div class="content">
       <div class="avatar">
         <label>
-          <input id="file" class="uploadImg file1" type="file" name="file" style="display: none" />
+          <input id="file" @change="upLoadHandle" class="uploadImg file1" type="file" name="file" style="display: none" />
           <img :src="`http://43.138.15.137:3000` + userAvatars" alt="" />
           <p>点击跟换头像</p>
         </label>
@@ -41,9 +41,10 @@
 </template>
 
 <script setup>
+import axios from 'axios'
 // 引入消息 文件
 import MessageMainVue from '../../components/js/message.js'
-import { modifyUserInfoAPI } from '../../api/my.js'
+import { modifyUserInfoAPI, uploadAvatarAPI } from '../../api/my.js'
 import { useRouter } from 'vue-router'
 import { ref, computed, onMounted, reactive } from 'vue'
 const router = useRouter()
@@ -56,7 +57,7 @@ const userAddresss = ref('')
 const userAvatars = ref('') // 图片
 
 const userinfo = ref({})
-const users=ref({})
+const users = ref({})
 
 // 我的页面的信息
 const userlist = JSON.parse(localStorage.getItem('userlist'))
@@ -68,30 +69,39 @@ userAges.value = userlist.userAge
 userAddresss.value = userlist.userAddress
 userAvatars.value = userlist.userAvatar
 // 解构我的页面需要的信息
- let {userNickname,userDesc,userGender,userAge,userAddress,userAvatar} =JSON.parse(localStorage.getItem('userlist'))
-  users.value = {
-    userNickname,userDesc, userGender, userAge ,userAddress, userAvatar
-  }
+let { userNickname, userDesc, userGender, userAge, userAddress, userAvatar } = JSON.parse(localStorage.getItem('userlist'))
+users.value = {
+  userNickname,
+  userDesc,
+  userGender,
+  userAge,
+  userAddress,
+  userAvatar
+}
 
 // 点击返回  做判断 是否修改
 const tomy = async () => {
-
   let res = await modifyUserInfoAPI({
     userNickname: userNicknames.value,
     userDesc: userDescs.value,
     userGender: userGenders.value,
     userAge: userAges.value,
     userAddress: userAddresss.value,
-    userAvatar: userAvatars.value
+    userAvatar:''
   })
   console.log(res.data.data, '修改')
   // 结构修改后需要的信息
-  let {userNickname,userDesc,userGender,userAge,userAddress,userAvatar} =res.data.data
+  let { userNickname, userDesc, userGender, userAge, userAddress, userAvatar } = res.data.data
   userinfo.value = {
-    userNickname,userDesc, userGender, userAge ,userAddress, userAvatar
+    userNickname,
+    userDesc,
+    userGender,
+    userAge,
+    userAddress,
+    userAvatar
   }
-  console.log(JSON.stringify(userinfo.value),'22')
-  console.log(JSON.stringify(users.value),'11')
+  // console.log(JSON.stringify(userinfo.value),'22')
+  // console.log(JSON.stringify(users.value),'11')
 
   // 如果修改了弹框
   if (JSON.stringify(users.value) !== JSON.stringify(userinfo.value)) {
@@ -99,12 +109,55 @@ const tomy = async () => {
       router.push('/my')
       MessageMainVue({ type: 'success', text: '修改成功~' })
     } else {
-      router.push('')
+      router.push('/my')
     }
-  }else{
-     router.push('/my')
+  } else {
+    router.push('/my')
   }
 }
+
+// 头像上传
+const upLoadHandle = async (e) => {
+  let files = e.target.files || e.dataTransfer.files
+  console.log(files[0])
+  // 如果集合的长度为0那么就return掉
+  if (!files.length) return
+  // 上传的文件类型限制
+  if (!/(jpeg|png)/i.test(files[0].type)) {
+    alert('上传的视频只能是jpg,png类型的')
+    e.target.value = ''
+    return
+  }
+  // 限制文件上传大小
+  if (files[0].size > 2 * 1024 * 1024) {
+    alert('上传的图片不能大于2MB')
+    return
+  }
+  // 创建FormData对象
+  let formData = new FormData()
+  // // 添加对应的请求参数
+  formData.append('fieldName', files[0])
+  console.log( files[0]);
+  // // 请求接口
+  let res=await uploadAvatarAPI(formData)
+  console.log(res);
+
+}
+// // 上传的方法
+// const getupload = async () => {
+//   // 判断是否上传了视频
+//   if (!videolist.realVideo) {
+//     MessageMainVue({ type: 'warn', text: '请选择上传的文件' })
+//     return false
+//   }
+//   // 把文件传递到服务器
+//   let formData = new FormData()
+//   // 后端需要videoPath参数，videoObj.realVideo是视频文件
+//   formData.append('videoPath', videolist.realVideo)
+//   // 请求上传接口
+//   const res = await uploadFileAPI(formData)
+//   console.log(res)
+// }
 </script>
 
 <style lang="scss" scoped>

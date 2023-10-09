@@ -74,7 +74,7 @@ export default {
 }
 .my-message {
   font-size: 18px;
-  width: 80%;
+  width: 70%;
   height: 50px;
   position: fixed;
   z-index: 9999;

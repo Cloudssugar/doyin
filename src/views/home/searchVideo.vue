@@ -115,6 +115,7 @@ const serachinp = Debounce(async (e) => {
       top: 2.8rem;
       left: 0.1rem;
       line-height: 15px;
+      font-size: 14px;
       background: rgba(39, 39, 39, 0);
       overflow: hidden;
       text-overflow: ellipsis;
@@ -134,6 +135,7 @@ const serachinp = Debounce(async (e) => {
       width: 100%;
       height: 0.4rem;
       text-align: center;
+      font-size: 16px;
       background: rgba(39, 39, 39, 0);
       .img1 {
         width: 0.4rem;
@@ -149,7 +151,7 @@ const serachinp = Debounce(async (e) => {
       }
       span {
         position: absolute;
-        top: 0px;
+        top: 4px;
         right: 10px;
       }
     }

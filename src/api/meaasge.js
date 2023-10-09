@@ -32,3 +32,44 @@ export function getbyCommentAPI(params) {
 export function getContactAPI(params) {
   return http.get(`api/user/${userId}/getContact`)
 }
+
+// 新增粉丝未读数量
+export function getFanUnreadNumAPI(params) {
+  return http.get(`api/user/${userId}/FanUnreadNum`)
+}
+
+// 新增粉丝全部读取
+export function getreadAllFanMsgAPI(params) {
+  return http.get(`api/user/${userId}/readAllFanMsg`)
+}
+
+// 新增赞未读数量  
+export function getbyLikeUnreadNumAPI(params) {
+  return http.get(`api/user/${userId}/byLikeUnreadNum`)
+}
+
+// 新增赞已读数量 
+export function getreadAllByLikeMsgAPI(params) {
+  return http.get(`api/user/${userId}/readAllByLikeMsg`)
+}
+
+
+// 新增@未读数量
+export function getAtUnreadNumAPI(params) {
+  return http.get(`api/user/${userId}/getAtUnreadNum`)
+}
+
+// 新增@未读数量
+export function getreadAllAtAPI(params) {
+  return http.get(`api/user/${userId}/readAllAt`)
+}
+
+// 新增评论未读数量
+export function getbyCommentUnreadNumAPI(params) {
+  return http.get(`api/user/${userId}/byCommentUnreadNum`)
+}
+
+// 新增评论已读数量
+export function getreadAllByCommentMsgAPI(params) {
+  return http.get(`api/user/${userId}/readAllByCommentMsg`)
+}

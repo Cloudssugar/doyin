@@ -145,6 +145,7 @@ const follow = async (item) => {
       height: 0.5rem;
       text-align: center;
       line-height: 0.5rem;
+      font-size: 14px;
     }
     .follow {
       background: rgba(134, 134, 134, 0.396);

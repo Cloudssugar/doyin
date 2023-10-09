@@ -1,17 +1,59 @@
 <template>
   <div>
-    <!-- 顶部栏 -->
-    <div class="tab">
+    <myzanAtPl :bymessagelist="byLikelist">
+      <!--顶部栏 使用插槽 -->
+      <template v-slot:tapSlot>
+        <div class="tab">
+          <img @click="tomessage" src="/src/assets/home/jiantou.png" alt="" />
+          <span>赞</span>
+        </div>
+      </template>
+      <!-- 内容使用插槽 -->
+      <template v-slot:useritemSlot>
+        <!-- 评论 -->
+        <div class="useritem" v-for="(item, index) in byLikelist" :key="item.id">
+          <!-- 小点 -->
+          <div class="info" v-show="item.isRead == 0" style="/* display: none; */"></div>
+          <!-- 头像 -->
+          <img class="userimg" :src="`http://43.138.15.137:3000` + item.userAvatar" alt="" />
+          <div class="cont">
+            <p>@{{ item.userNickname }}</p>
+            <p>赞了你的评论</p>
+            <p>{{ formatTime(item.createdAt) }}</p>
+          </div>
+          <!-- 评论 -->
+          <div class="guai">{{ item.commentContent }}</div>
+        </div>
+        <!-- 视频 -->
+        <div class="useritem" v-for="(item, index) in byLikelist" :key="item.id">
+          <!-- 小点 -->
+          <div class="info" v-show="item.isRead == 0" style="/* display: none; */"></div>
+          <!-- 头像 -->
+          <img class="userimg" :src="`http://43.138.15.137:3000` + item.userAvatar" alt="" />
+          <div class="cont">
+            <p>@{{ item.userNickname }}</p>
+            <p>赞了你的作品</p>
+            <p>{{ formatTime(item.createdAt) }}</p>
+          </div>
+          <!-- 视频 -->
+          <div class="guai">
+            <img class="works" :src="item.videoCover" alt="" />
+          </div>
+        </div>
+      </template>
+    </myzanAtPl>
+    <!-- <div class="tab">
       <img @click="tomessage" src="/src/assets/home/jiantou.png" alt="" />
       <span>赞</span>
     </div>
     <div class="ddd"></div>
-    <!-- 内容 -->
+  
     <div class="userlist">
-      <!-- 评论 -->
-      <div class="useritem" v-for="(item, index) in tbyLikelist" :key="item.id" v-show="item.userId == 'efe6a71d-636b-4443-95e1-9b72fe451b09'">
-        <!-- {{ item }} -->
-        <img :src="`http://43.138.15.137:3000` + item.userAvatar" alt="" />
+ //评论
+      <div class="useritem" v-for="(item, index) in tbyLikelist" :key="item.id" >
+        <div class="info" v-show="item.isRead==0" style="/* display: none; */"></div>
+
+        <img class="userimg" :src="`http://43.138.15.137:3000` + item.userAvatar" alt="" />
         <div class="cont">
           <p>@{{ item.userNickname }}</p>
           <p>赞了你的评论</p>
@@ -19,46 +61,53 @@
         </div>
         <div class="guai">{{ item.commentContent }}</div>
       </div>
-      <!-- 视频 -->
-      <div class="useritem" v-for="(item, index) in tbyLikelist" :key="item.id" v-show="item.videoId == '0d0d3cc7-5419-4dfe-8d63-8c36aca6dda0'">
-        <!-- {{ item }} -->
-        <img :src="`http://43.138.15.137:3000` + item.userAvatar" alt="" />
+//视频
+      <div class="useritem" v-for="(item, index) in tbyLikelist" :key="item.id" >
+
+         <div class="info" v-show="item.isRead==0" style="/* display: none; */">
+        </div>
+        <img class="userimg" :src="`http://43.138.15.137:3000` + item.userAvatar" alt="" />
         <div class="cont">
           <p>@{{ item.userNickname }}</p>
           <p>赞了你的作品</p>
           <p>{{ formatTime(item.createdAt) }}</p>
         </div>
-        <div class="guai isfollow">
-          <img :src="item.videoCover" alt="" />
+        <div class="guai">
+          <img class="works" :src="item.videoCover" alt="" />
         </div>
       </div>
     </div>
+      <div class="nomore">没有更多啦</div> -->
   </div>
 </template>
 
 <script setup>
+import myzanAtPl from '../../components/comcom/my-zanAtPl.vue'
 // 时间
 import { formatTime } from '../../utils/formatTime.js'
 // 引入消息 文件
 import MessageMainVue from '../../components/js/message.js'
 import { Debounce } from '../../utils/debounce.js'
-import { getbyLikeAPI, gettriggerFollowAPI } from '../../api/meaasge.js'
+import { getbyLikeAPI, getreadAllByLikeMsgAPI } from '../../api/meaasge.js'
 import { useRouter } from 'vue-router'
 import { ref, computed, onMounted, reactive } from 'vue'
 const router = useRouter()
 onMounted(() => {
   gettbyLike()
 })
-
-const tbyLikelist = ref([])
+// 赞列表
+const byLikelist = ref([])
 const gettbyLike = async () => {
   let res = await getbyLikeAPI()
   console.log(res)
-  tbyLikelist.value = res.data.data
+  byLikelist.value = res.data.data
 }
 
-const tomessage = () => {
-  router.push('/message')
+// 赞已读
+const tomessage = async () => {
+  router.go(-1)
+  let res = await getreadAllByLikeMsgAPI()
+  console.log(res)
 }
 </script>
 
@@ -93,15 +142,22 @@ const tomessage = () => {
     align-items: center;
     width: 100%;
     border-bottom: 1px solid rgb(48, 48, 48);
-    img {
-      float: left;
+    .info {
+      width: 0.2rem;
+      height: 0.2rem;
+      background: orange;
+      display: block;
       margin-left: 0.1rem;
-      width: 1rem;
-      height: 1rem;
       border-radius: 50px;
     }
+    .userimg {
+      float: left;
+      margin-left: 0.2rem;
+      width: 1rem;
+      height: 1rem;
+    }
     .cont {
-      width: 4.2rem;
+      width: 4rem;
 
       margin-left: 0.4rem;
       line-height: 0.3rem;
@@ -120,14 +176,17 @@ const tomessage = () => {
       text-align: center;
       line-height: 0.5rem;
       font-size: 14px;
-    }
-    .follow {
-      background: rgba(134, 134, 134, 0.396);
-    }
-    .isfollow {
-      border: 1px solid white;
-      width: 1rem;
+      .works {
+        border-radius: 0.1rem;
+        width: 1.5rem;
+        height: 1rem;
+      }
     }
   }
+}
+.nomore {
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
 }
 </style>

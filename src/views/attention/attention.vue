@@ -1,28 +1,42 @@
 <template>
   <div>
     <!-- 我关注的动态 -->
-    <dynamicState :FollowerVideolist='FollowerVideolist'></dynamicState>
-    <tabbar></tabbar> 
+    <dynamicState :FollowerVideolist="FollowerVideolist" :loadlist='loadlist' @changeFollowerVideo="getFollowerVideo"></dynamicState>
+    <tabbar></tabbar>
   </div>
 </template>
 
 <script setup>
-
 import dynamicState from '../../components/comcom/dynamic-state.vue'
 import tabbar from '../../components/comcom/tabbar.vue'
-import { getFollowerVideoAPI,} from '../../api/attention.js'
+import { getFollowerVideoAPI } from '../../api/attention.js'
 import { ref, onMounted, reactive } from 'vue'
 onMounted(() => {
   getFollowerVideo()
-  let iszanlike=localStorage.getItem('iszanlike')
-    // getreview()
+  let iszanlike = localStorage.getItem('iszanlike')
+  // getreview()
 })
 // 获取数据
 const FollowerVideolist = ref([])
-const getFollowerVideo = async () => {
-  let res = await getFollowerVideoAPI()
-  console.log(res.data.data)
-  FollowerVideolist.value = res.data.data
+const loadlist= ref([])
+
+const getFollowerVideo = async (page, obj) => {
+  let res = await getFollowerVideoAPI(page)
+  loadlist.value=res.data.data
+
+  console.log(res,123);
+  // 
+  if(loadlist.value){
+     if (obj?.bool) {
+    FollowerVideolist.value = [...FollowerVideolist.value, ...res.data.data]
+    obj.fn()
+  } else {
+    FollowerVideolist.value = res.data.data
+  }
+  }else{
+    console.log('没有了呜呜呜');
+  }
+ 
   for (var i = 0; i < FollowerVideolist.value.length; i++) {
     FollowerVideolist.value[i].iszanlike = false
   }
@@ -52,7 +66,6 @@ const getFollowerVideo = async () => {
 //   }
 // }
 
-
 // //评论列表
 // const isreview = ref(false)
 // const reviewlist = ref([])
@@ -76,7 +89,6 @@ const getFollowerVideo = async () => {
 //   isreview.value = !isreview.value
 // }
 
-
 // // 发表评论
 // const reviewinp = async (reviewval) => {
 //   const userId = localStorage.getItem('userId')
@@ -92,7 +104,6 @@ const getFollowerVideo = async () => {
 //   getreview()
 //   MessageMainVue({ type: 'success', text: '我评论啦' })
 // }
-
 </script>
 
 <style lang="scss" scoped></style>

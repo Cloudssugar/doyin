@@ -10,7 +10,7 @@ const routes = [
   {
     path: '/home',
     name: 'home',
-    component: () => import(/* webpackChunkName: 'importPage' */ '../views/home/home.vue'),
+    component: () => import(/* webpackChunkName: 'importPage' */ '../views/home/home.vue')
   },
   {
     path: '/login',
@@ -36,9 +36,9 @@ const routes = [
     component: () => import(/* webpackChunkName: 'importPage' */ '../views/attention/attention.vue')
   },
   {
-    path: '/shool',
-    name: 'shool',
-    component: () => import(/* webpackChunkName: 'importPage' */ '../views/shool.vue')
+    path: '/shoot',
+    name: 'shoot',
+    component: () => import(/* webpackChunkName: 'importPage' */ '../views/shoot/shoot.vue')
   },
   {
     path: '/message',
@@ -71,6 +71,11 @@ const routes = [
     component: () => import(/* webpackChunkName: 'importPage' */ '../views/message/contact.vue')
   },
   {
+    path: '/chat/:id?',
+    name: 'chat',
+    component: () => import(/* webpackChunkName: 'importPage' */ '../views/message/chat.vue')
+  },
+  {
     path: '/my',
     name: 'my',
     component: () => import(/* webpackChunkName: 'importPage' */ '../views/my/my.vue'),
@@ -96,6 +101,16 @@ const routes = [
     path: '/userinfo',
     name: 'userinfo',
     component: () => import(/* webpackChunkName: "about" */ '../views/my/userinfo.vue')
+  },
+  {
+    path: '/follow',
+    name: 'follow',
+    component: () => import(/* webpackChunkName: "about" */ '../views/my/follow.vue')
+  },
+  {
+    path: '/myvermicelli',
+    name: 'myvermicelli',
+    component: () => import(/* webpackChunkName: "about" */ '../views/my/myvermicelli.vue')
   }
 ]
 const router = createRouter({
@@ -106,7 +121,7 @@ const router = createRouter({
 // 全局前置守卫 ————初始化的时候被调用、每次路由切换之前被调用
 router.beforeEach((to, from, next) => {
   // 登录和注册  首页界面进行选择
-  if (to.path === '/login'  || to.path === '/home') {
+  if (to.path === '/login' || to.path === '/home') {
     next()
   } else {
     // 如果没有 userId 就去登录
@@ -120,5 +135,26 @@ router.beforeEach((to, from, next) => {
     }
   }
 })
+
+// 进入页面的标题
+router.afterEach((to, from) => {
+  if (to.path === '/home') {
+    document.title = '抖音记录美好生活'
+  }
+  if (to.path === '/attention') {
+    document.title = '动态'
+  }
+  if (to.path === '/shoot') {
+    document.title = '发布视频'
+  }
+  if (to.path === '/message') {
+    document.title = '消息'
+  }
+  if (to.path === '/my/videoAndDesc') {
+
+    document.title = '我的'
+  }
+})
+
 
 export default router

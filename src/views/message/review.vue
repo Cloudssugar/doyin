@@ -1,26 +1,52 @@
 <template>
   <div>
+    <!-- @ -->
+    <myzanAtPl :bymessagelist="byCommentlist">
+      <!--顶部栏 使用插槽 -->
+      <template v-slot:tapSlot>
+        <div class="tab">
+          <img @click="tomessage" src="/src/assets/home/jiantou.png" alt="" />
+          <span>评论</span>
+        </div>
+      </template>
+      <template v-slot:useritemSlot>
+        <div class="useritem" v-for="(item, index) in byCommentlist" :key="item.id">
+          <div class="info" v-show="item.isRead == 0" style="/* display: none; */"></div>
+          <img class="user" :src="`http://43.138.15.137:3000` + item.userAvatar" alt="" />
+          <div class="cont">
+            <p>@{{ item.userNickname }}</p>
+            <p>{{ item.commentContent }}</p>
+            <p>评论了你的作品 {{ formatTime(item.createdAt) }}</p>
+          </div>
+          <div class="guai">
+            <img class="works" :src="item.videoCover" alt="" />
+          </div>
+        </div>
+      </template>
+    </myzanAtPl>
     <!-- 顶部栏 -->
-    <div class="tab">
+    <!-- <div class="tab">
       <img @click="tomessage" src="/src/assets/home/jiantou.png" alt="" />
       <span>评论</span>
     </div>
-<div class="ddd"></div>
-    <!-- 内容 -->
+    <div class="ddd"></div>
+
     <div class="userlist">
-      <div class="useritem" v-for="(item, index) in byCommentlist" :key="item.id" >
-        <!-- {{ item }} -->
+      <div class="useritem" v-for="(item, index) in byCommentlist" :key="item.id">
+
+        <div class="info" v-show="item.isRead == 0" style="/* display: none; */"></div>
         <img class="user" :src="`http://43.138.15.137:3000` + item.userAvatar" alt="" />
         <div class="cont">
           <p>@{{ item.userNickname }}</p>
-          <p>{{item.commentContent}}</p>
+          <p>{{ item.commentContent }}</p>
           <p>评论了你的作品 {{ formatTime(item.createdAt) }}</p>
         </div>
-        <div class="guai isfollow" >
+        <div class="guai">
           <img class="works" :src="item.videoCover" alt="" />
         </div>
       </div>
-    </div>
+        <div class="nomore">没有更多啦</div>
+    </div> -->
   </div>
 </template>
 
@@ -30,26 +56,26 @@ import { formatTime } from '../../utils/formatTime.js'
 // 引入消息 文件
 import MessageMainVue from '../../components/js/message.js'
 import { Debounce } from '../../utils/debounce.js'
-import { getbyCommentAPI, gettriggerFollowAPI } from '../../api/meaasge.js'
+import myzanAtPl from '../../components/comcom/my-zanAtPl.vue'
+import { getbyCommentAPI, getreadAllByCommentMsgAPI } from '../../api/meaasge.js'
 import { useRouter } from 'vue-router'
 import { ref, computed, onMounted, reactive } from 'vue'
 const router = useRouter()
 onMounted(() => {
   getbyComment()
 })
-
+// 评论列表
 const byCommentlist = ref([])
 const getbyComment = async () => {
   let res = await getbyCommentAPI()
   console.log(res)
   byCommentlist.value = res.data.data
-  
 }
-
-
-
-const tomessage = () => {
-  router.push('/message')
+// 评论已读
+const tomessage = async () => {
+  router.go(-1)
+  let res = await getreadAllByCommentMsgAPI()
+  console.log(res)
 }
 </script>
 
@@ -85,6 +111,14 @@ const tomessage = () => {
     align-items: center;
     width: 100%;
     border-bottom: 1px solid rgb(48, 48, 48);
+    .info {
+      width: 0.2rem;
+      height: 0.2rem;
+      background: orange;
+      display: block;
+      margin-left: 0.1rem;
+      border-radius: 50px;
+    }
     .user {
       float: left;
       margin-left: 0.2rem;
@@ -93,7 +127,7 @@ const tomessage = () => {
       border-radius: 50px;
     }
     .cont {
-      width: 4.2rem;
+      width: 4rem;
 
       margin-left: 0.4rem;
       line-height: 0.3rem;
@@ -112,14 +146,17 @@ const tomessage = () => {
       text-align: center;
       line-height: 0.5rem;
       font-size: 14px;
-      .works{
+      .works {
         border-radius: 0.1rem;
         width: 1.5rem;
         height: 1rem;
       }
     }
-   
- 
   }
+}
+.nomore {
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
 }
 </style>

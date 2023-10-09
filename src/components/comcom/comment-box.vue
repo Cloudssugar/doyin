@@ -2,8 +2,8 @@
   <div>
     <!-- 评论的弹出框 -->
     <transition name="slide">
-      <div class="review" v-show="isreview" @touchmove.prevent>
-        <div class="box" @touchmove.prevent>
+      <div class="review" v-show="isreview" >
+        <div class="box" >
           <div class="review-top">
             <span></span>
             <span>{{ reviewlist.length }}条评论</span>
@@ -18,8 +18,8 @@
                 <span>{{ formatTime(item.Comment.createdAt) }}</span>
               </div>
               <div class="like" @click="getpllike(item)">
-                <img v-if="item.ispllike==false" src="/src/assets/home/like.png" alt="" />
-                <img  v-if="item.ispllike==true" src="/src/assets/home/likered.png" alt="" />
+                <img v-if="!item.ispllike" src="/src/assets/home/like.png" alt="" />
+                <img  v-else src="/src/assets/home/likered.png" alt="" />
 
                 <span>{{ item.likeNum }}</span>
               </div>
@@ -30,7 +30,7 @@
               <input v-focus v-model="reviewval" @keydown.enter="reviewinp" type="text" placeholder="多一次评论，多一份理解" />
               <div>
                 <span>@</span>
-                <img src="/src/assets/home/tick.png" alt="" />
+                <img @click="reviewinp" src="/src/assets/home/tick.png" alt="" />
               </div>
             </div>
           </div>
@@ -106,14 +106,15 @@ const getpllike = async (item) => {
   bottom: 0px !important;
 }
 .review {
-  overflow: scroll;
+  overflow-y: scroll;
+  
   z-index: 999;
   width: 100%;
   height: 70%;
   position: fixed;
   left: 0;
   bottom: 0;
-  background:  rgb(27, 27, 27);
+  background:   rgb(29, 29, 29);
   color: rgb(194, 194, 194);
 }
 .box {
@@ -122,7 +123,7 @@ const getpllike = async (item) => {
   .review-top {
     position: fixed;
     left: 0;
-    top: 190px;
+    top: 210px;
     border-bottom: 0.01rem solid rgb(51, 51, 51);
     width: 100%;
     height: 0.6rem;

@@ -1,49 +1,56 @@
 <template>
   <div class="home">
     <!-- 搜索按钮 -->
-    <img class="search-img" @click="tosearch" src="/src/assets/home/search.png" alt="" />
+    <div class="search" @click="tosearch">
+      <div class="search-o"></div>
+      <div class="search-i"></div>
+    </div>
+    <!-- <img class="search-img" @click="tosearch" src="/src/assets/home/search.png" alt="" /> -->
     <!-- 首页视频 -->
-    <div class="box" :class="{ animsteClass: flag }" v-for="(item, index) in videolist" :key="item.id" :style="{ transform: `translateY(${y}px)`, paddingTop: (moveindex ? moveindex - 1 : 0) * clientY + 'px' }" @touchstart="start" @touchmove="move" @touchend="end($event, index)">
-      <div class="top">
-        <!-- 一个空的 -->
-        <!-- <img @click="tosearch" src="/src/assets/home/search.png" alt="" /> -->
-      </div>
-      <!-- 视频盒子 -->
-      <div class="middle" @click="changeVideoplay">
-        <video cless="video" :src="item.Video.videoPath" ref="videos" style="width: 100%; height: 100%; object-fit: fill" autoplay loop muted showPlay @click="bofang($event)"></video>
-        <!-- 暂停按钮 -->
-        <img class="kaishi" @click="bofang" v-show="!videoIsPlay" src="/src/assets/home/kaishi.png" alt="" />
-      </div>
-      <!-- 视频内容 -->
-      <div class="bottom">
-        <div class="content">
-          <div><img class="weizhi" src="/src/assets/home/weizhi.png" alt="" /> 北京市</div>
-          <div>@{{ item.Video.userNickname }}</div>
-          <div>{{ item.Video.videoDesc }}</div>
+    <div :class="{ animsteClass: flag }" :style="{ transform: `translateY(${y}px)` }">
+      <div class="box" v-for="(item, index) in videolist" :key="item.id" @touchstart="start" @touchmove="move" @touchend="end($event, index)">
+        <div class="top">
+          <!-- 一个空的 -->
+          <!-- <img @click="tosearch" src="/src/assets/home/search.png" alt="" /> -->
+        </div>
+        <!-- 视频盒子 -->
+        <div class="middle" @click="changeVideoplay">
+          <video autoplay="autoplay" muted cless="video" ref="videos" style="width: 100%; height: 100%; object-fit: fill" loop @click="bofang($event, item.Video.videoId)">
+            <source :src="item.Video.videoPath" type="video/mp4" />
+            //视频地址
+          </video>
+          <!-- 暂停按钮 -->
+          <img class="kaishi" @click="bofang($event, item.Video.videoId)" v-show="item.videoIsPlay" src="/src/assets/home/kaishi.png" alt="" />
+        </div>
+        <div class="bottom">
+          <div class="content">
+            <div><img class="weizhi" src="/src/assets/home/weizhi.png" alt="" /> 北京市</div>
+            <div>@{{ item.Video.userNickname }}</div>
+            <div>{{ item.Video.videoDesc }}</div>
+          </div>
+        </div>
+        <!-- 用户头像 -->
+        <div class="avatar">
+          <img :src="`http://43.138.15.137:3000` + item.Video.userAvatar" alt="" />
+        </div>
+        <!-- 点赞的爱心 -->
+        <div class="icon" @click="getlike(item)">
+          <img v-if="item.isshowlike == false" src="/src/assets/home/like.png" alt="" />
+          <img v-else src="/src/assets/home/likered.png" alt="" />
+          <span>{{ item.WSLCNum.likeNum }}</span>
+        </div>
+        <!-- 评论 -->
+        <div class="icon2">
+          <img @click="getreview(item)" src="/src/assets/home/message.png" alt="" />
+          <span>{{ item.WSLCNum.commentNum }}</span>
+        </div>
+        <!-- 分享 -->
+        <div class="icon3">
+          <img src="/src/assets/home/share.png" alt="" />
+          <span>{{ item.WSLCNum.shareNum }}</span>
         </div>
       </div>
-      <!-- 用户头像 -->
-      <div class="avatar">
-        <img :src="`http://43.138.15.137:3000` + item.Video.userAvatar" alt="" />
-      </div>
-      <!-- 点赞的爱心 -->
-      <div class="icon" @click="getlike(item)">
-        <img v-if="item.isshowlike == false" src="/src/assets/home/like.png" alt="" />
-        <img v-else src="/src/assets/home/likered.png" alt="" />
-        <span>{{ item.WSLCNum.likeNum }}</span>
-      </div>
-      <!-- 评论 -->
-      <div class="icon2">
-        <img @click="getreview(item)" src="/src/assets/home/message.png" alt="" />
-        <span>{{ item.WSLCNum.commentNum }}</span>
-      </div>
-      <!-- 分享 -->
-      <div class="icon3">
-        <img src="/src/assets/home/share.png" alt="" />
-        <span>{{ item.WSLCNum.shareNum }}</span>
-      </div>
     </div>
-
     <!-- 评论的弹出框 -->
     <commentBbox :isreview="isreview" @getreviews="getreviews" :reviewlist="reviewlist" @getreview="getreview" :reviewval="reviewval" @reviewinp="reviewinp"> </commentBbox>
     <!-- <div class="review" v-show="isreview" @touchmove.prevent> -->
@@ -111,8 +118,10 @@ const video = async () => {
   for (let i = 0; i < videolist.length; i++) {
     videolist[i].isshowlike = false
     videolist[i].muted = false
+    videolist[i].videoIsPlay = false
   }
-  console.log(videolist)
+  console.log(videolist, 'videolist')
+  // console.log(videolist.slice(0, 1))
 }
 
 // //
@@ -121,7 +130,6 @@ const video = async () => {
 const getlike = async (item) => {
   item.isshowlike = !item.isshowlike
   const videoId = item.Video.videoId
-  // localStorage.setItem('videoId', item.Video.videoId)
   let res = await triggerLikeAPI(videoId)
   MessageMainVue({ type: 'success', text: res.data.data })
   if (videoId == item.Video.videoId) {
@@ -150,6 +158,7 @@ const videos = ref(null)
 console.log(videos)
 
 const start = (e) => {
+  console.log(y)
   // 判断手指在页面的位置
   // e.touches  获取当前手指在页面位置
   startY.value = e.touches[0].pageY
@@ -165,11 +174,12 @@ const move = (e) => {
 const end = (e, index) => {
   // 松手时 移动的距离
   let endY = e.changedTouches[0].pageY - startY.value
-  // console.log(endY)
+  console.log(endY, clientY / 4)
   //
   if (Math.abs(endY) < clientY / 4) {
     y.value = startMoveY.value
   } else {
+    videolist.forEach((item) => (item.videoIsPlay = false))
     if (endY < 0) {
       // 下一屏
       if (videolist[index + 1]) {
@@ -183,9 +193,10 @@ const end = (e, index) => {
     } else {
       // 上一屏
       if (videolist[index - 1]) {
-        y.value = startMoveY.value - clientY
+        y.value = startMoveY.value + clientY
         videos.value[index].pause()
         videos.value[index - 1].play()
+        // videoIsPlay.value = false
       } else {
         y.value = startMoveY.value
         // 没有了
@@ -195,21 +206,11 @@ const end = (e, index) => {
   flag.value = true
 }
 
-
 // 视频开始暂停
-const videoIsPlay = ref(true)
-const bofang = (e) => {
-  videoIsPlay.value = !videoIsPlay.value
-  let num = e.currentTarget
-  console.log(num, '移动')
-  if (num.paused) {
-    num.play()
-    pauses = false
-  } else {
-    num.pause()
-    pauses = true
-
-  }
+const bofang = (e, id) => {
+  const reslutObj = videolist.find((item) => item.Video.videoId === id)
+  reslutObj.videoIsPlay = !reslutObj.videoIsPlay
+  !reslutObj.videoIsPlay ? e.target.play() : e.target.pause()
 }
 
 //评论列表
@@ -237,7 +238,6 @@ const getreviews = () => {
 
 // 发表评论
 const reviewinp = async (reviewval) => {
-
   const userId = localStorage.getItem('userId')
   let res = await commentVideoAPI({
     fromUserId: userId,
@@ -248,8 +248,9 @@ const reviewinp = async (reviewval) => {
   console.log(res)
   // reviewval.value = ''
   // 重新调用接口
- let ress = await getVideoCommentAPI(plvideoId.value)
-  console.log(res)
+  let ress = await getVideoCommentAPI(plvideoId.value)
+  console.log(ress)
+  // getreview()
   reviewlist.value = ress.data.data
   MessageMainVue({ type: 'success', text: '我评论啦' })
 }
@@ -328,22 +329,37 @@ video::-webkit-media-controls-volume-slider {
   width: 100%;
   height: 100vh;
   overflow: hidden;
-
-  transition: all 0.3s ease;
-
-  transition: transform 0.3s ease;
 }
-
-.search-img {
+.search {
   z-index: 10;
   position: fixed;
   top: 0.4rem;
   right: 0.4rem;
-  width: 0.4rem;
-  height: 0.4rem;
+
+  width: 0.6rem;
+  height: 0.6rem;
+  .search-o {
+    width: 0.3rem;
+    height: 0.3rem;
+    border: 0.04rem solid white;
+    border-radius: 50px;
+  }
+  .search-i {
+    position: fixed;
+    top: 0.67rem;
+    right: 0.65rem;
+    width: 0.001rem;
+    height: 0.1rem;
+    background: white;
+    border: 0.025rem solid white;
+    // 旋转
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+  }
 }
+
 .animsteClass {
-  transition: transfrom 0.5s ease;
+  transition: transform 0.6s;
 }
 .box {
   box-sizing: border-box;
@@ -351,10 +367,26 @@ video::-webkit-media-controls-volume-slider {
   position: relative;
   width: 100%;
   height: 100vh;
+  .review-top {
+    position: fixed;
+    left: 0;
+    top: 190px;
+    border-bottom: 0.01rem solid rgb(51, 51, 51);
+    width: 100%;
+    height: 0.6rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background: black;
+    img {
+      width: 0.4rem;
+      height: 0.4rem;
+    }
+  }
   .top {
     width: 100%;
     height: 3.8rem;
-    position: relative;
     img {
       position: absolute;
       top: 0.4rem;
@@ -367,7 +399,7 @@ video::-webkit-media-controls-volume-slider {
     width: 100%;
     height: 4rem;
     background: pink;
-    position: relative;
+
     img {
       position: absolute;
       top: 40%;
@@ -380,7 +412,7 @@ video::-webkit-media-controls-volume-slider {
   .bottom {
     width: 100%;
     height: 4rem;
-    position: relative;
+
     .content {
       margin-left: 0.4rem;
       margin-top: 0.6rem;
@@ -405,6 +437,7 @@ video::-webkit-media-controls-volume-slider {
       }
     }
   }
+
   .avatar {
     position: absolute;
     top: 330px;
@@ -439,6 +472,7 @@ video::-webkit-media-controls-volume-slider {
     @include icon();
   }
 }
+
 .review {
   overflow: scroll;
   z-index: 999;
@@ -449,27 +483,7 @@ video::-webkit-media-controls-volume-slider {
   bottom: 0;
   background: black;
 }
-.box {
-  width: 100%;
 
-  .review-top {
-    position: fixed;
-    left: 0;
-    top: 190px;
-    border-bottom: 0.01rem solid rgb(51, 51, 51);
-    width: 100%;
-    height: 0.6rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    background: black;
-    img {
-      width: 0.4rem;
-      height: 0.4rem;
-    }
-  }
-}
 .reviewlist {
   width: 100%;
   overflow-y: auto;

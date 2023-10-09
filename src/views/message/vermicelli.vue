@@ -1,34 +1,30 @@
 <template>
   <div class="box">
-    <!-- 顶部栏 -->
-    <div class="tab">
-      <img @click="tomessage" src="/src/assets/home/jiantou.png" alt="" />
-      <span>粉丝</span>
-    </div>
-<div class="ddd"></div>
-    <!-- 粉丝 -->
-    <div class="userlist">
-      <div class="useritem" v-for="(item, index) in fansilist" :key="item.id">
-        <!-- {{ item }} -->
-        <img :src="`http://43.138.15.137:3000` + item.userAvatar" alt="" />
-        <div class="cont">
-          <p>{{ item.userNickname }}</p>
-          <p>{{ item.userDesc }}</p>
+    <myFollowFans :FollowFans="fansilist">
+      <!-- 顶部栏 -->
+      <template v-slot:tapSlot>
+        <div class="tab">
+          <img @click="tomessage" src="/src/assets/home/jiantou.png" alt="" />
+          <span>粉丝</span>
         </div>
-        <div class="guai isfollow" @click="follow(item)" v-show="item.bothStatus == 0">关注</div>
-        <div class="guai follow" @click="follow(item)" v-show="item.myRelation == 'follow'">已关注</div>
-        <div class="guai follow" @click="follow(item)" v-show="item.bothStatus == 1">互相关注</div>
-        <div class="guai isfollow" @click="follow(item)" v-show="item.myRelation == 'fan'">关注</div>
-      </div>
-    </div>
+      </template>
+      <!-- 按钮 -->
+      <!-- 插槽接收参数   卡槽传值必须用template包裹，v-slot:加名字 = 后面是数据 -->
+      <template v-slot:buttonSlot='scope'>
+        <!-- {{ buttonSlot.bothStatus }} -->
+        <div class="guai isfollow" @click="follow( scope)" v-show=" scope.bothStatus.bothStatus== 0">关注</div>
+        <div class="guai follow" @click="follow( scope)" v-show=" scope.bothStatus.bothStatus== 1">互相关注</div>
+      </template>
+    </myFollowFans>
   </div>
 </template>
 
 <script setup>
+import myFollowFans from '../../components/comcom/my-FollowFans.vue'
 // 引入消息 文件
 import MessageMainVue from '../../components/js/message.js'
 import { Debounce } from '../../utils/debounce.js'
-import { getFansoAPI, gettriggerFollowAPI } from '../../api/meaasge.js'
+import { getFansoAPI, gettriggerFollowAPI, getreadAllFanMsgAPI } from '../../api/meaasge.js'
 import { useRouter } from 'vue-router'
 import { ref, computed, onMounted, reactive } from 'vue'
 const router = useRouter()
@@ -44,26 +40,41 @@ const getFanso = async () => {
 }
 
 // 关注
-const follow = async (item) => {
-  console.log(item.userId)
-  const userId = item.userId
+const follow = async ( scope) => {
+  // console.log(scope.bothStatus.userId)
+  const userId = scope.bothStatus.userId
   let res = await gettriggerFollowAPI(userId)
   console.log(res)
-  getFanso()
-  if (item.bothStatus == 1) {
+ getFanso()
+  if ( scope.bothStatus.bothStatus == 1) {
     MessageMainVue({ type: 'success', text: res.data.data })
-  } else if (item.bothStatus == 0) {
+  } else if ( scope.bothStatus.bothStatus == 0) {
     MessageMainVue({ type: 'success', text: res.data.data })
   }
 }
+// const follow = async (item) => {
+//   console.log(item.userId)
+//   const userId = item.userId
+//   let res = await gettriggerFollowAPI(userId)
+//   console.log(res)
+//   getFanso()
+//   if (item.bothStatus == 1) {
+//     MessageMainVue({ type: 'success', text: res.data.data })
+//   } else if (item.bothStatus == 0) {
+//     MessageMainVue({ type: 'success', text: res.data.data })
+//   }
+// }
 
-const tomessage = () => {
-  router.push('/message')
+// 粉丝已读
+const tomessage = async () => {
+  router.go(-1)
+  let res = await getreadAllFanMsgAPI()
+  console.log(res)
 }
 </script>
 
 <style lang="scss" scoped>
-.box{
+.box {
   position: relative;
 }
 .tab {
@@ -97,7 +108,7 @@ const tomessage = () => {
     align-items: center;
     width: 100%;
     border-bottom: 1px solid rgb(48, 48, 48);
-    img {
+    .userimg {
       float: left;
       margin-left: 0.3rem;
       width: 1rem;
@@ -105,7 +116,7 @@ const tomessage = () => {
       border-radius: 50px;
     }
     .cont {
-      width: 4.2rem;
+      width: 4rem;
 
       margin-left: 0.4rem;
       line-height: 0.3rem;
@@ -128,5 +139,10 @@ const tomessage = () => {
       background: #f8355f;
     }
   }
+}
+.nomore {
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
 }
 </style>
