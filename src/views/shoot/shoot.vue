@@ -84,7 +84,6 @@ const getFileType = (bytes) => {
 
 // 监听用户选择的文件
 const changeurl = (e) => {
-  console.log(e)
   let files = e.target.files
   if (!files.length) return
   //
@@ -107,6 +106,7 @@ const changeurl = (e) => {
   // 修改video src 地址
   setSrcAndCaptureImage()
 }
+
 // 获取视频地址(封装成方法是为了解决兼容问题)
 const createObjectURL = (file) => {
   let url = null

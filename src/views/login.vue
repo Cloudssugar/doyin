@@ -1,5 +1,6 @@
 <template>
   <div class="box">
+    <!-- 登录 -->
     <transition>
       <div class="box1" v-show="islogin">
         <div class="top">
@@ -15,7 +16,7 @@
         </div>
       </div>
     </transition>
-    <!--  -->
+    <!-- 注册 -->
     <transition name="my">
       <div class="box1" v-show="issignin">
         <div class="top">
@@ -40,6 +41,9 @@
 </template>
 
 <script setup>
+import { inject } from 'vue'
+
+const socket = inject('socket') // 注入到全局
 import { Debounce } from '../utils/debounce.js'
 import axios from 'axios'
 import { getCodeAPI, postregisterAPI, postloginAPI } from '../api/login.js'
@@ -70,12 +74,13 @@ let obj = reactive({
 
 const email = ref('y3328670472@163.com')
 const password = ref('123456')
+
 const codes = ref('')
 // 点击发送倒计时按钮
 const code = async () => {
   if (obj.isSend) return
   //接口
-  console.log('请求接口');
+  console.log('请求接口')
   // let res = await getCodeAPI(email.value)
   // console.log(res)
   // if (res.data == 200) {
@@ -152,6 +157,9 @@ const login = async () => {
   localStorage.setItem('userId', res.data.data.userId)
   MessageMainVue({ type: 'success', text: '登录成功~' })
   router.push('/home')
+  console.log(res.data.data.userId)
+  // 把用户id传递后端，后端把用户id和socketId关联；login客户端和服务端协商好的事件
+  socket.emit('login', res.data.data.userId)
 }
 //
 const tohome = () => {

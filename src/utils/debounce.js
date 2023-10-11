@@ -7,13 +7,16 @@
  */
 export const Debounce = (fn, t) => {
   let delay = t || 500
+  //定义一个定时器
   let timer = null
   return function () {
     let args = arguments
     if (timer) {
+      // /清除这个定时器
       clearTimeout(timer)
       timer = null
     }
+    // / 处理函数
     timer = setTimeout(() => {
       //因为是箭头函数 所以this指向里面可以直接用
       fn.apply(this, args)

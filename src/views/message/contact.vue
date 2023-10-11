@@ -54,13 +54,15 @@ onMounted(() => {
   getContact()
 })
 
+// 去好友聊天页面
 const tochat = (item) => {
   console.log(item)
+  localStorage.setItem('userinfo',JSON.stringify(item) )
   router.push({
     name: 'chat',
-    params: {
-      id: JSON.stringify(item) 
-    }
+    // params: {
+    //   id: JSON.stringify(item) 
+    // }
   })
 }
 // computed(()=>{

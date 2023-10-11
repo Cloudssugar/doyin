@@ -12,7 +12,7 @@
           <p>{{ item.userDesc }}</p>
         </div>
         <!-- 按钮 插槽-->
-        <!-- 插槽传递参数 -->
+        <!-- 插槽传递参数 --> 
         <slot name="buttonSlot" :bothStatus="item"></slot>
       </div>
     </div>

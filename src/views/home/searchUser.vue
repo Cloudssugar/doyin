@@ -46,7 +46,7 @@ const tohome = () => {
 const userval = ref('')
 const userlist = ref([])
 //  搜索
-const userinp = Debounce(async (e) => {
+const userinp = Debounce(async () => {
   let res = await searchUserAPI({
     key: userval.value
   })

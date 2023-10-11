@@ -9,7 +9,7 @@ import MessageMainVue from '../components/js/message.js'
 const service = axios.create({
   // 公共接口前缀 正常应该从环境变量中获取
   baseURL: '/api',
-  timeout: 5000, // 请求超时时间
+  timeout: 50000, // 请求超时时间
   // 表示跨域请求时是否需要使用凭证
   withCredentials: false // default
 })
@@ -34,15 +34,20 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   function (response) {
     // 对响应数据做点什么 做一些接口请求成功以后的提示处理、关闭loading
-    // console.log(response.status)
-    if (response.status === 200) {
-      const res = response.data
-      /* 如果 code 是-1 说明用户注销 或者 或者token已经过期了 */
-      /* 需要消除localStoreage 和 清除vuex的token */
-      if (res.code === -1) {
-        clearHandler()
-      }
-    }
+    // res是响应的结果
+    // console.log(response,100000000);
+    // let data = JSON.parse(res.data)
+    // if (data.code === 200) {
+    //   return data
+    // } else if (data.code === 403) {
+    //   router.replace({ name: 'login' })
+    //   ElMessage({
+    //     type: 'error',
+    //     message: '权限过期，请重新登陆'
+    //   })
+    // } else {
+    //   return data
+    // }
 
     return response
   },
@@ -50,37 +55,31 @@ service.interceptors.response.use(
     // 对响应错误做点什么，做一些接口请求失败以后的提示处理，比如404路径错误、403没有权限等等处理
     /*判断一下未授权 */
     // 统一处理HTTP错误状态码
-    console.log(error)
+    // console.log(error, 12345678)
+    switch (error.response.status) {
+      case 400:
+        // 登录失效
+        // 响应成功的拦截
+        // console.log('响应拦截器：')
+        MessageMainVue({ type: 'warn', text: '出错啦T^T' })
+        localStorage.removeItem('userId')
+        break
+      case 404:
+        MessageMainVue({ type: 'warn', text: '页面出错啦，重新登陆(・ω<)' })
+        break
+      case 500:
+        // 错误
+        MessageMainVue({ type: 'warn', text: '网络被吃了(▼ヘ▼#)' })
 
-    if (error) {
-      // console.log(error.response.status.message)
-      switch (error.response.status) {
-        case 400:
-          // clearHandler()
-          MessageMainVue({ type: 'warn', text: '出错啦T^T' })
-          // router.replace('/login')
-          break
-        case 404:
-          clearHandler()
-          MessageMainVue({ type: 'warn', text: '页面出错啦，重新登陆(・ω<)' })
-          // router.replace('/login')
-          break
-        case 500:
-          // clearHandler()
-          MessageMainVue({ type: 'warn', text: '网络被吃了(▼ヘ▼#)' })
-          break
-        default:
-        // 处理其它HTTP错误
-      }
+        break
+      default:
+        return response
     }
+
+
 
     return Promise.reject(error)
   }
 )
-
-// 用来清空localStoreage
-function clearHandler() {
-  localStorage.removeItem('userId')
-}
 
 export default service

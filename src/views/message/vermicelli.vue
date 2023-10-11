@@ -10,10 +10,10 @@
       </template>
       <!-- 按钮 -->
       <!-- 插槽接收参数   卡槽传值必须用template包裹，v-slot:加名字 = 后面是数据 -->
-      <template v-slot:buttonSlot='scope'>
+      <template v-slot:buttonSlot="item">
         <!-- {{ buttonSlot.bothStatus }} -->
-        <div class="guai isfollow" @click="follow( scope)" v-show=" scope.bothStatus.bothStatus== 0">关注</div>
-        <div class="guai follow" @click="follow( scope)" v-show=" scope.bothStatus.bothStatus== 1">互相关注</div>
+        <div class="guai isfollow" @click="follow(item)" v-show="item.bothStatus.bothStatus == 0">关注</div>
+        <div class="guai follow" @click="follow(item)" v-show="item.bothStatus.bothStatus == 1">互相关注</div>
       </template>
     </myFollowFans>
   </div>
@@ -40,15 +40,15 @@ const getFanso = async () => {
 }
 
 // 关注
-const follow = async ( scope) => {
-  // console.log(scope.bothStatus.userId)
-  const userId = scope.bothStatus.userId
+const follow = async (item) => {
+  // console.log(item.bothStatus.userId)
+  const userId = item.bothStatus.userId
   let res = await gettriggerFollowAPI(userId)
   console.log(res)
- getFanso()
-  if ( scope.bothStatus.bothStatus == 1) {
+  getFanso()
+  if (item.bothStatus.bothStatus == 1) {
     MessageMainVue({ type: 'success', text: res.data.data })
-  } else if ( scope.bothStatus.bothStatus == 0) {
+  } else if (item.bothStatus.bothStatus == 0) {
     MessageMainVue({ type: 'success', text: res.data.data })
   }
 }

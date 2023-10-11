@@ -2,8 +2,8 @@
   <div>
     <!-- 评论的弹出框 -->
     <transition name="slide">
-      <div class="review" v-show="isreview" >
-        <div class="box" >
+      <div class="review" v-show="isreview">
+        <div class="box">
           <div class="review-top">
             <span></span>
             <span>{{ reviewlist.length }}条评论</span>
@@ -19,7 +19,7 @@
               </div>
               <div class="like" @click="getpllike(item)">
                 <img v-if="!item.ispllike" src="/src/assets/home/like.png" alt="" />
-                <img  v-else src="/src/assets/home/likered.png" alt="" />
+                <img v-else src="/src/assets/home/likered.png" alt="" />
 
                 <span>{{ item.likeNum }}</span>
               </div>
@@ -42,7 +42,7 @@
 
 <script setup>
 // 时间
-import {formatTime} from '../../utils/formatTime.js'
+import { formatTime } from '../../utils/formatTime.js'
 // 引入消息 文件
 import MessageMainVue from '../../components/js/message.js'
 import { reactive, ref, defineProps, toRefs, onMounted } from 'vue'
@@ -66,15 +66,13 @@ onMounted(() => {
 })
 //  发布评论
 const reviewinp = () => {
-  if( reviewval.value.trim()==''){
+  if (reviewval.value.trim() == '') {
     return
   }
   emit('reviewinp', reviewval.value)
   reviewval.value = ''
   console.log(reviewval.value, '111')
 }
-
-
 
 // 评论里边的点赞
 const videoId = ref('')
@@ -101,20 +99,19 @@ const getpllike = async (item) => {
 </script>
 
 <style lang="scss" scoped>
-
 .openActive {
   bottom: 0px !important;
 }
 .review {
   overflow-y: scroll;
-  
+
   z-index: 999;
   width: 100%;
   height: 70%;
   position: fixed;
   left: 0;
   bottom: 0;
-  background:   rgb(29, 29, 29);
+  background: rgb(29, 29, 29);
   color: rgb(194, 194, 194);
 }
 .box {
@@ -131,7 +128,7 @@ const getpllike = async (item) => {
     justify-content: space-between;
     align-items: center;
 
-  background: rgb(27, 27, 27);
+    background: rgb(27, 27, 27);
     img {
       width: 0.4rem;
       height: 0.4rem;
@@ -177,12 +174,12 @@ const getpllike = async (item) => {
       }
     }
   }
-  .nopl{
+  .nopl {
     margin-top: 0.2rem;
     font-size: 14px;
-  text-align: center;
-  height: 1.2rem;
-}
+    text-align: center;
+    height: 1.2rem;
+  }
 }
 
 .publish {
@@ -214,8 +211,6 @@ const getpllike = async (item) => {
   }
 }
 
-
-
 .slide-enter-active {
   animation-name: slideInUp;
   animation-duration: 0.2s;
@@ -246,5 +241,4 @@ const getpllike = async (item) => {
     transform: translate3d(0, 100%, 0);
   }
 }
-
 </style>

@@ -7,37 +7,41 @@
         <span>{{ chatlist.userNickname }}</span>
       </div>
       <!--  -->
-      <div class="box">
-        <div ref="messageref">
+      <div class="box" v-scrollbottom>
+        <div ref="messageref" v-for="(item, index) in getPrivatelist" :key="item.id">
+          <div class="formatTime">
+            <span>{{ formatTime(item.createdAt) }}</span>
+          </div>
           <div class="messagelist">
             <!-- 我的聊天消息 -->
-            <div class="messageitem left">
+            <div class="messageitem left" v-show="item.fromId === myuserid">
               <div class="hearimg">
                 <img src="../../assets/img/c75ae7128274356b4033ab6464338b67.jpg" alt="" />
               </div>
 
-              <div class="message">111</div>
+              <div class="message">{{ item.privateLetterContent }}</div>
               <!-- 聊天框的小三角 -->
               <div class="triangle-left"></div>
             </div>
+
             <!-- 好友的聊天消息 -->
-            <div class="messageitem right">
+            <div class="messageitem right" v-show="item.fromId !== myuserid">
               <div class="hearimg">
                 <img :src="`http://43.138.15.137:3000` + chatlist.userAvatar" alt="" />
               </div>
               <!-- 聊天框的小三角 -->
               <div class="triangle-right"></div>
-              <div class="message">1111</div>
+              <div class="message">{{ item.privateLetterContent }}</div>
             </div>
           </div>
         </div>
 
         <!-- 发送消息 -->
         <div class="replycom">
-          <input type="text" placeholder="发送消息" name="" id="" />
+          <input type="text" placeholder="发送消息" name="" id="" v-model="chatinp" />
           <div class="reply">
             <span>@</span>
-            <span><img src="../../assets/home/tick.png" alt="" /></span>
+            <span @click="addchat"><img src="../../assets/home/tick.png" alt="" /></span>
           </div>
         </div>
       </div>
@@ -46,23 +50,102 @@
 </template>
 
 <script setup>
+// 时间
+import { formatTime } from '../../utils/formatTime.js'
 import { ref, onMounted, reactive } from 'vue'
+import { getPrivateLetterAPI, readPrivateLetterAPI, privateLetterAPI } from '../../api/meaasge'
 import { useRouter, useRoute } from 'vue-router'
 const router = useRouter()
 const route = useRoute()
+import { inject } from 'vue'
+// socket.emit('login', myuserid)
 
+const socket = inject('socket') // 注入到全局
+
+onMounted(() => {
+  getPrivate()
+  readchat()
+})
+
+// 返回
 const tomessage = () => {
   router.go(-1)
 }
-//
-console.log(JSON.parse(route.params.id))
+
+//顶部好友名称
 const chatlist = ref()
-chatlist.value = JSON.parse(route.params.id)
+chatlist.value = JSON.parse(localStorage.getItem('userinfo'))
+// console.log(chatlist.value,'000000')
+
+// 我的userid
+const myuserid = localStorage.getItem('userId')
+// 我的名字
+const userlist = JSON.parse(localStorage.getItem('userlist'))
+const userNickname = userlist.userNickname
+// console.log(userNickname);
+// 好友的id
+localStorage.setItem('toUserId', chatlist.value.userId)
+
+// 获取消息数据
+const getPrivatelist = ref([])
+const getPrivate = async () => {
+  let res = await getPrivateLetterAPI(chatlist.value.userId)
+  getPrivatelist.value = res.data.data
+  // console.log(getPrivatelist.value)
+}
+
+// 读取聊天信息
+const readchat = async () => {
+  let res = await readPrivateLetterAPI(chatlist.value.userId)
+  // console.log(res, '22222')
+}
+
+// 发送聊天
+const chatinp = ref('')
+const addchat = async () => {
+  if (chatinp.value.trim() == '') return
+  let res = await privateLetterAPI({
+    content: chatinp.value,
+    fromUserId: myuserid,
+    toUserId: chatlist.value.userId
+  })
+  console.log(res)
+  getPrivate()
+
+  //
+  let obj = {
+    fromId: myuserid,
+    toId: chatlist.value.userId,
+    privateLetterContent: chatinp.value,
+    createdAt: 1686795510568,
+    userAvatar: '/assets/avatar/1203c37e-bb58-48e3-811a-be0081a0f873.png',
+    userNickname: userNickname
+  }
+
+  // 发送数据到服务端
+  socket.emit('sendPrivateLetter', obj) // sendPrivateLetter客户端和服务端协商好的事件
+
+  // 清空
+  chatinp.value = ''
+}
+
+socket.on('receivePrivateLetter', (data) => {
+  // receivePrivateLetter客户端和服务端协商好的事件
+  console.log(data)
+  getPrivatelist.value.push(data)
+  // console.log(getPrivatelist.value)
+})
 </script>
 
 <style lang="scss" scoped>
 div {
   color: white;
+}
+.formatTime {
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+  color: rgb(199, 199, 199);
 }
 .top {
   position: fixed;
@@ -74,6 +157,7 @@ div {
   border-bottom: 1px solid rgb(242, 242, 242);
   display: flex;
   align-items: center;
+  background: rgb(24, 24, 24);
 
   img {
     margin-left: 0.2rem;
@@ -88,6 +172,10 @@ div {
 .box {
   margin-bottom: 0.8rem;
   margin-top: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+  overflow-y: auto;
 }
 .messagelist {
   width: 100%;
@@ -95,14 +183,13 @@ div {
     display: flex;
     align-items: center;
     width: 100%;
-    padding-bottom: 0.2rem;
     padding-top: 0.2rem;
+    margin-bottom: 0.8rem;
     .message {
-      max-width: 2rem;
-
+      max-width: 4rem;
+      min-height: 0.6rem;
       padding-left: 0.2rem;
       padding-right: 0.2rem;
-      height: 0.6rem;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -148,7 +235,7 @@ div {
   .triangle-left {
     position: absolute;
     top: 0.45rem;
-    right:1.2rem;
+    right: 1.2rem;
     width: 0;
     height: 0;
     border: 8px solid transparent;
@@ -157,7 +244,7 @@ div {
   .triangle-right {
     position: absolute;
     top: 0.45rem;
-    left:1.2rem;
+    left: 1.2rem;
     width: 0;
     height: 0;
     border: 8px solid transparent;
@@ -185,7 +272,7 @@ div {
     position: absolute;
     top: 0.3rem;
     right: 0;
-    width:1.2rem;
+    width: 1.2rem;
     display: flex;
     justify-content: space-around;
     background: rgb(29, 28, 28);

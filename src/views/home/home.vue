@@ -175,7 +175,7 @@ const end = (e, index) => {
   // 松手时 移动的距离
   let endY = e.changedTouches[0].pageY - startY.value
   console.log(endY, clientY / 4)
-  //
+  // 判断滑动的距离是不是屏幕的4/1
   if (Math.abs(endY) < clientY / 4) {
     y.value = startMoveY.value
   } else {

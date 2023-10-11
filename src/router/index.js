@@ -5,17 +5,17 @@ const routes = [
   {
     path: '/',
     redirect: 'home',
-    component: () => import(/* webpackChunkName: 'importPage' */ '../views/home/home.vue')
+    component: () => import('../views/home/home.vue')
   },
   {
     path: '/home',
     name: 'home',
-    component: () => import(/* webpackChunkName: 'importPage' */ '../views/home/home.vue')
+    component: () => import('../views/home/home.vue')
   },
   {
-    path: '/login',
+    path: '/login', //  登录注册页
     name: 'login',
-    component: () => import(/* webpackChunkName: 'importPage' */ '../views/login.vue'),
+    component: () => import('../views/login.vue'),
     meta: {
       keepAlive: true // 组件需要缓存
     }
@@ -23,62 +23,62 @@ const routes = [
   {
     path: '/search/video',
     name: 'searchVideo',
-    component: () => import(/* webpackChunkName: 'importPage' */ '../views/home/searchVideo.vue')
+    component: () => import('../views/home/searchVideo.vue')
   },
   {
     path: '/search/user',
     name: 'searchUser',
-    component: () => import(/* webpackChunkName: 'importPage' */ '../views/home/searchUser.vue')
+    component: () => import('../views/home/searchUser.vue')
   },
   {
     path: '/attention',
     name: 'attention',
-    component: () => import(/* webpackChunkName: 'importPage' */ '../views/attention/attention.vue')
+    component: () => import('../views/attention/attention.vue')
   },
   {
     path: '/shoot',
     name: 'shoot',
-    component: () => import(/* webpackChunkName: 'importPage' */ '../views/shoot/shoot.vue')
+    component: () => import('../views/shoot/shoot.vue')
   },
   {
     path: '/message',
     name: 'message',
-    component: () => import(/* webpackChunkName: 'importPage' */ '../views/message/message.vue')
+    component: () => import('../views/message/message.vue')
   },
   {
     path: '/vermicelli',
     name: 'vermicelli',
-    component: () => import(/* webpackChunkName: 'importPage' */ '../views/message/vermicelli.vue')
+    component: () => import('../views/message/vermicelli.vue')
   },
   {
     path: '/zan',
     name: 'zan',
-    component: () => import(/* webpackChunkName: 'importPage' */ '../views/message/zan.vue')
+    component: () => import('../views/message/zan.vue')
   },
   {
     path: '/at',
     name: 'at',
-    component: () => import(/* webpackChunkName: 'importPage' */ '../views/message/at.vue')
+    component: () => import('../views/message/at.vue')
   },
   {
     path: '/review',
     name: 'review',
-    component: () => import(/* webpackChunkName: 'importPage' */ '../views/message/review.vue')
+    component: () => import('../views/message/review.vue')
   },
   {
     path: '/contact',
     name: 'contact',
-    component: () => import(/* webpackChunkName: 'importPage' */ '../views/message/contact.vue')
+    component: () => import('../views/message/contact.vue')
   },
   {
     path: '/chat/:id?',
     name: 'chat',
-    component: () => import(/* webpackChunkName: 'importPage' */ '../views/message/chat.vue')
+    component: () => import('../views/message/chat.vue')
   },
   {
     path: '/my',
     name: 'my',
-    component: () => import(/* webpackChunkName: 'importPage' */ '../views/my/my.vue'),
+    component: () => import('../views/my/my.vue'),
     children: [
       {
         path: 'video',
@@ -151,10 +151,8 @@ router.afterEach((to, from) => {
     document.title = '消息'
   }
   if (to.path === '/my/videoAndDesc') {
-
     document.title = '我的'
   }
 })
-
 
 export default router

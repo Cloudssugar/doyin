@@ -3,6 +3,8 @@ import http from '../service/http.js'
 
 const userId = localStorage.getItem('userId')
 
+const toUserId=localStorage.getItem('toUserId')
+console.log(localStorage.getItem('toUserId'),'9999999');
 // 粉丝列表
 export function getFansoAPI(params) {
   return http.get(`api/user/${userId}/Fans/page/1/${userId}`)
@@ -72,4 +74,19 @@ export function getbyCommentUnreadNumAPI(params) {
 // 新增评论已读数量
 export function getreadAllByCommentMsgAPI(params) {
   return http.get(`api/user/${userId}/readAllByCommentMsg`)
+}
+
+// 获取聊天信息
+export function getPrivateLetterAPI(params) {
+  return http.get(`api/user/${userId}/getPrivateLetter/${params}`)
+}
+
+// 读取聊天信息
+export function readPrivateLetterAPI(params) {
+  return http.get(`api/user/${userId}/readPrivateLetter/${params}`)
+}
+
+// 发送聊天信息
+export function privateLetterAPI(params) {
+  return http.post(`api/user/${userId}/privateLetter/${toUserId}`,params)
 }
