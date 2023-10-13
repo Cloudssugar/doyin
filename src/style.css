@@ -10,18 +10,4 @@ a{
   input[type=text]:focus {
     outline: none;
 }
-/* 隐藏滚动条 */
-.outer-container::-webkit-scrollbar {
-  width: 0; /* 设置滚动条的宽度为0 */
-  background-color: transparent; /* 设置滚动条背景为透明 */
-}
 
-/* 自定义滚动条轨道样式 */
-.outer-container::-webkit-scrollbar-track {
-  background-color: transparent; /* 设置滚动条轨道背景为透明 */
-}
-
-/* 自定义滚动条滑块样式 */
-.outer-container::-webkit-scrollbar-thumb {
-  background-color: transparent; /* 设置滚动条滑块背景为透明 */
-}

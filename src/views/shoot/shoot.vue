@@ -36,7 +36,7 @@
         <div @click="Preview">预览</div>
         <div @click="getupload">发布</div>
       </div>
-      <img style="width: 150px; height: 100px" src="" alt="" ref="image" />
+      <!-- <img style="width: 150px; height: 100px" src="" alt="" ref="image" /> -->
     </div>
   </div>
 </template>
@@ -145,7 +145,7 @@ const capture = () => {
   canvas.height = getVideoDom.value.videoHeight
   // 从图像的0,0坐标截取宽为 canvas，width
   canvas.getContext('2d').drawImage(getVideoDom.value, 0, 0, canvas.width, canvas.height)
-  image.value.src = canvas.toDataURL('image/jpg')
+  // image.value.src = canvas.toDataURL('image/jpg')
   videolist.coverUrl = canvas.toDataURL('image/png')
   // 移除事件
   getVideoDom.value.removeEventListener('loadeddata', capture)
@@ -153,7 +153,7 @@ const capture = () => {
 
 // 图片转成2进制
 const dataURLtoblot = (dataurl) => {
-  // console.log(dataurl,1222222);
+  console.log(dataurl,dataurl);
   var bytestring = atob(dataurl.split(',')[1])
   var mimestring = dataurl.split(',')[0].split(':')[1].split(';'[0])
 

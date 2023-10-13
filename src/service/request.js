@@ -35,7 +35,7 @@ service.interceptors.response.use(
   function (response) {
     // 对响应数据做点什么 做一些接口请求成功以后的提示处理、关闭loading
     // res是响应的结果
-    // console.log(response,100000000);
+    console.log(response, 'response')
     // let data = JSON.parse(res.data)
     // if (data.code === 200) {
     //   return data
@@ -55,14 +55,15 @@ service.interceptors.response.use(
     // 对响应错误做点什么，做一些接口请求失败以后的提示处理，比如404路径错误、403没有权限等等处理
     /*判断一下未授权 */
     // 统一处理HTTP错误状态码
-    // console.log(error, 12345678)
+    console.log(error, 'error')
     switch (error.response.status) {
       case 400:
         // 登录失效
-        // 响应成功的拦截
-        // console.log('响应拦截器：')
-        MessageMainVue({ type: 'warn', text: '出错啦T^T' })
+        MessageMainVue({ type: 'warn', text: '重新登录一下吧ヽ(・Д・)ﾉ'  })
         localStorage.removeItem('userId')
+        break
+      case 401:
+        MessageMainVue({ type: 'warn', text: '出错啦T^T'})
         break
       case 404:
         MessageMainVue({ type: 'warn', text: '页面出错啦，重新登陆(・ω<)' })
@@ -76,7 +77,10 @@ service.interceptors.response.use(
         return response
     }
 
-
+    // // //  网络超时
+    // if (error.message.includes('timeout')) {
+    //   MessageMainVue({ type: 'warn', text: '请求超时，请稍后重试呀(・ω<)' })
+    // }
 
     return Promise.reject(error)
   }

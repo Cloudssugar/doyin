@@ -38,7 +38,7 @@
 
         <!-- 发送消息 -->
         <div class="replycom">
-          <input type="text" placeholder="发送消息" name="" id="" v-model="chatinp" />
+          <input type="text" placeholder="发送消息" name="" id="" v-model="chatinp" v-focus/>
           <div class="reply">
             <span>@</span>
             <span @click="addchat"><img src="../../assets/home/tick.png" alt="" /></span>

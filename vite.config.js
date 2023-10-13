@@ -3,6 +3,10 @@ import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  esbuild: {
+    //打包时去除console和debugger代码
+    drop: ['console', 'debugger']
+  },
   plugins: [vue()],
   base: './',
   css: {

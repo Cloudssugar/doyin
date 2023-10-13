@@ -120,7 +120,7 @@ const getpllike = async (item) => {
   .review-top {
     position: fixed;
     left: 0;
-    top: 210px;
+    top: 200px;
     border-bottom: 0.01rem solid rgb(51, 51, 51);
     width: 100%;
     height: 0.6rem;
@@ -144,7 +144,7 @@ const getpllike = async (item) => {
     display: flex;
     align-items: center;
     width: 100%;
-    height: 1.2rem;
+    height: 60%;
     border-bottom: 0.01rem solid rgb(51, 51, 51);
     img {
       border-radius: 50px;

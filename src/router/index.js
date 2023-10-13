@@ -79,38 +79,51 @@ const routes = [
     path: '/my',
     name: 'my',
     component: () => import('../views/my/my.vue'),
+    meta: {
+      keepAlive: true // 组件需要缓存
+    },
     children: [
       {
         path: 'video',
         name: 'video',
-        component: () => import(/* webpackChunkName: "about" */ '../views/my/video.vue')
+        component: () => import('../views/my/video.vue'),
+        meta: {
+          keepAlive: true // 组件需要缓存
+        }
       },
+
       {
         path: 'videoAndDesc',
         name: 'videoAndDesc',
-        component: () => import(/* webpackChunkName: "about" */ '../views/my/videoAndDesc.vue')
+        component: () => import('../views/my/videoAndDesc.vue'),
+        meta: {
+          keepAlive: true // 组件需要缓存
+        }
       },
       {
         path: 'likes',
         name: 'likes',
-        component: () => import(/* webpackChunkName: "about" */ '../views/my/likes.vue')
+        component: () => import('../views/my/likes.vue'),
+        meta: {
+          keepAlive: true // 组件需要缓存
+        }
       }
     ]
   },
   {
     path: '/userinfo',
     name: 'userinfo',
-    component: () => import(/* webpackChunkName: "about" */ '../views/my/userinfo.vue')
+    component: () => import('../views/my/userinfo.vue')
   },
   {
     path: '/follow',
     name: 'follow',
-    component: () => import(/* webpackChunkName: "about" */ '../views/my/follow.vue')
+    component: () => import('../views/my/follow.vue')
   },
   {
     path: '/myvermicelli',
     name: 'myvermicelli',
-    component: () => import(/* webpackChunkName: "about" */ '../views/my/myvermicelli.vue')
+    component: () => import('../views/my/myvermicelli.vue')
   }
 ]
 const router = createRouter({

@@ -5,7 +5,7 @@
     <div class="ddd"></div>
     <!-- 内容 -->
     <div class="userlist">
-    <!-- 插槽  内容 -->
+      <!-- 插槽  内容 -->
       <slot name="useritemSlot"></slot>
       <div class="nomore">没有更多啦</div>
     </div>
@@ -14,14 +14,8 @@
 
 <script setup>
 // 时间
-import { formatTime } from '../../utils/formatTime.js'
-// 引入消息 文件
-import MessageMainVue from '../../components/js/message.js'
-import { Debounce } from '../../utils/debounce.js'
-import { getAtAPI, getreadAllAtAPI } from '../../api/meaasge.js'
+
 import { useRouter } from 'vue-router'
-import { ref, computed, onMounted, reactive } from 'vue'
-const router = useRouter()
 
 const props = defineProps({
   bymessagelist: Array

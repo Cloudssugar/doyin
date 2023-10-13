@@ -11,7 +11,9 @@
       <div class="avatar">
         <label>
           <input id="file" @change="upLoadHandle" class="uploadImg file1" type="file" name="file" style="display: none" />
-          <img :src="`http://43.138.15.137:3000` + userAvatars" alt="" />
+          <img :src="`http://43.138.15.137:3000` + userAvatars" alt="" v-if="userAvatars == '/assets/avatar/97ff8e30-d5ea-4995-8c0d-b7765699f5e5.png'" />
+          <img :src="userAvatars" alt="" v-if="userAvatars !== '/assets/avatar/97ff8e30-d5ea-4995-8c0d-b7765699f5e5.png'" />
+
           <p>点击跟换头像</p>
         </label>
       </div>
@@ -67,7 +69,9 @@ userDescs.value = userlist.userDesc
 userGenders.value = userlist.userGender
 userAges.value = userlist.userAge
 userAddresss.value = userlist.userAddress
+
 userAvatars.value = userlist.userAvatar
+console.log(userAvatars);
 // 解构我的页面需要的信息
 let { userNickname, userDesc, userGender, userAge, userAddress, userAvatar } = JSON.parse(localStorage.getItem('userlist'))
 users.value = {
@@ -87,7 +91,7 @@ const tomy = async () => {
     userGender: userGenders.value,
     userAge: userAges.value,
     userAddress: userAddresss.value,
-    userAvatar:''
+    userAvatar: userAvatars.value
   })
   console.log(res.data.data, '修改')
   // 结构修改后需要的信息
@@ -117,47 +121,68 @@ const tomy = async () => {
 }
 
 // 头像上传
-const upLoadHandle = async (e) => {
+// const upLoadHandle = async (e) => {
+//   let files = e.target.files || e.dataTransfer.files
+//   console.log(files[0])
+//   // 如果集合的长度为0那么就return掉
+//   if (!files.length) return
+//   // 上传的文件类型限制
+//   if (!/(jpeg|png)/i.test(files[0].type)) {
+//     alert('上传的视频只能是jpg,png类型的')
+//     e.target.value = ''
+//     return
+//   }
+//   // 限制文件上传大小
+//   if (files[0].size > 2 * 1024 * 1024) {
+//     alert('上传的图片不能大于2MB')
+//     return
+//   }
+//   // 创建FormData对象
+//   let formData = new FormData()
+//   // // 添加对应的请求参数
+//   formData.append('fieldName', files[0])
+//   console.log( files[0]);
+//   // // 请求接口
+//   let res=await uploadAvatarAPI(formData)
+//   console.log(res);
+
+// }
+const upLoadHandle = async(e) => {
+  // 获取图片数据
   let files = e.target.files || e.dataTransfer.files
-  console.log(files[0])
+
   // 如果集合的长度为0那么就return掉
   if (!files.length) return
+
   // 上传的文件类型限制
   if (!/(jpeg|png)/i.test(files[0].type)) {
-    alert('上传的视频只能是jpg,png类型的')
+    alert('上传的图片只能是jpg或png类型的')
     e.target.value = ''
     return
   }
+
   // 限制文件上传大小
   if (files[0].size > 2 * 1024 * 1024) {
     alert('上传的图片不能大于2MB')
     return
   }
-  // 创建FormData对象
-  let formData = new FormData()
-  // // 添加对应的请求参数
-  formData.append('fieldName', files[0])
-  console.log( files[0]);
-  // // 请求接口
-  let res=await uploadAvatarAPI(formData)
-  console.log(res);
 
+  // 使用FileReader读取文件并转换为Base64字符串
+  const reader = new FileReader()
+  reader.onload = function (event) {
+    // console.log(event.target);
+    const base64String = event.target.result
+
+    // console.log(base64String)
+    userAvatars.value = base64String
+    // 在这里你可以使用base64String进行进一步处理，比如显示在页面上或上传到服务器
+  }
+
+  // 读取文件并触发onload事件
+  reader.readAsDataURL(files[0])
+  //  let res=await uploadAvatarAPI(userAvatars.value)
+  // console.log(res);
 }
-// // 上传的方法
-// const getupload = async () => {
-//   // 判断是否上传了视频
-//   if (!videolist.realVideo) {
-//     MessageMainVue({ type: 'warn', text: '请选择上传的文件' })
-//     return false
-//   }
-//   // 把文件传递到服务器
-//   let formData = new FormData()
-//   // 后端需要videoPath参数，videoObj.realVideo是视频文件
-//   formData.append('videoPath', videolist.realVideo)
-//   // 请求上传接口
-//   const res = await uploadFileAPI(formData)
-//   console.log(res)
-// }
 </script>
 
 <style lang="scss" scoped>
